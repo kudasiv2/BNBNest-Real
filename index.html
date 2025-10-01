@@ -5,11 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BNBNest - Professional Investment Platform</title>
     <script src="https://cdn.jsdelivr.net/npm/web3@1.8.0/dist/web3.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary: #2c5aa0;
-            --secondary: #1e3a8a;
-            --accent: #3b82f6;
+            --pink-glow: #ff00ff;
+            --pink-light: #ff69b4;
+            --pink-medium: #e75480;
+            --navy-dark: #0f172a;
+            --navy-medium: #1e293b;
+            --navy-light: #334155;
+            --accent: #8b5cf6;
             --success: #10b981;
             --warning: #f59e0b;
             --danger: #ef4444;
@@ -26,9 +31,10 @@
         }
         
         body {
-            background-color: #f1f5f9;
-            color: var(--dark);
+            background: linear-gradient(135deg, var(--navy-dark), var(--navy-medium));
+            color: var(--light);
             line-height: 1.6;
+            overflow-x: hidden;
         }
         
         .container {
@@ -38,10 +44,20 @@
             padding: 0 20px;
         }
         
+        /* Glow Effect */
+        .glow-text {
+            text-shadow: 0 0 10px var(--pink-glow), 0 0 20px var(--pink-glow), 0 0 30px var(--pink-glow);
+        }
+        
+        .glow-box {
+            box-shadow: 0 0 15px rgba(255, 0, 255, 0.3), 0 0 30px rgba(255, 0, 255, 0.2);
+        }
+        
         /* Header & Navigation */
         header {
-            background-color: white;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            background: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(255, 0, 255, 0.2);
             position: sticky;
             top: 0;
             z-index: 100;
@@ -59,11 +75,17 @@
             align-items: center;
             font-size: 24px;
             font-weight: 700;
-            color: var(--primary);
+            color: white;
+        }
+        
+        .logo img {
+            height: 40px;
+            margin-right: 10px;
         }
         
         .logo span {
-            color: var(--accent);
+            color: var(--pink-light);
+            text-shadow: 0 0 10px var(--pink-glow);
         }
         
         .nav-links {
@@ -77,37 +99,45 @@
         
         .nav-links a {
             text-decoration: none;
-            color: var(--dark);
+            color: var(--light);
             font-weight: 500;
-            transition: color 0.3s;
+            transition: all 0.3s;
+            padding: 5px 10px;
+            border-radius: 5px;
         }
         
         .nav-links a:hover {
-            color: var(--primary);
+            color: var(--pink-light);
+            text-shadow: 0 0 5px var(--pink-glow);
+            background: rgba(255, 105, 180, 0.1);
         }
         
         .nav-links a.active {
-            color: var(--primary);
-            font-weight: 600;
+            color: var(--pink-light);
+            text-shadow: 0 0 5px var(--pink-glow);
+            background: rgba(255, 105, 180, 0.2);
         }
         
         .wallet-connect {
-            background-color: var(--primary);
+            background: linear-gradient(135deg, var(--pink-light), var(--pink-medium));
             color: white;
             border: none;
             padding: 10px 20px;
             border-radius: 5px;
             cursor: pointer;
             font-weight: 500;
-            transition: background-color 0.3s;
+            transition: all 0.3s;
+            box-shadow: 0 0 10px rgba(255, 105, 180, 0.5);
         }
         
         .wallet-connect:hover {
-            background-color: var(--secondary);
+            background: linear-gradient(135deg, var(--pink-medium), var(--pink-light));
+            box-shadow: 0 0 15px rgba(255, 105, 180, 0.7);
+            transform: translateY(-2px);
         }
         
         .wallet-connected {
-            background-color: var(--success);
+            background: linear-gradient(135deg, var(--success), #059669);
             display: flex;
             align-items: center;
             gap: 10px;
@@ -119,26 +149,47 @@
             border: none;
             font-size: 24px;
             cursor: pointer;
-            color: var(--dark);
+            color: var(--light);
         }
         
         /* Hero Section */
         .hero {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            background: linear-gradient(135deg, var(--navy-dark), var(--navy-medium));
             color: white;
-            padding: 80px 0;
+            padding: 100px 0;
             text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 30% 50%, rgba(255, 0, 255, 0.1), transparent 50%),
+                        radial-gradient(circle at 70% 20%, rgba(139, 92, 246, 0.1), transparent 50%);
+            z-index: 0;
+        }
+        
+        .hero .container {
+            position: relative;
+            z-index: 1;
         }
         
         .hero h1 {
             font-size: 48px;
             margin-bottom: 20px;
+            text-shadow: 0 0 10px rgba(255, 0, 255, 0.5);
         }
         
         .hero p {
             font-size: 20px;
             max-width: 700px;
             margin: 0 auto 30px;
+            color: #cbd5e1;
         }
         
         .hero-buttons {
@@ -155,28 +206,33 @@
             transition: all 0.3s;
             text-decoration: none;
             display: inline-block;
+            text-align: center;
         }
         
         .btn-primary {
-            background-color: white;
-            color: var(--primary);
-            border: 2px solid white;
+            background: linear-gradient(135deg, var(--pink-light), var(--pink-medium));
+            color: white;
+            border: 2px solid var(--pink-light);
+            box-shadow: 0 0 15px rgba(255, 105, 180, 0.5);
         }
         
         .btn-primary:hover {
-            background-color: transparent;
-            color: white;
+            background: transparent;
+            color: var(--pink-light);
+            box-shadow: 0 0 20px rgba(255, 105, 180, 0.7);
+            transform: translateY(-3px);
         }
         
         .btn-outline {
-            background-color: transparent;
+            background: transparent;
             color: white;
             border: 2px solid white;
         }
         
         .btn-outline:hover {
-            background-color: white;
-            color: var(--primary);
+            background: white;
+            color: var(--navy-dark);
+            transform: translateY(-3px);
         }
         
         /* Features Section */
@@ -191,12 +247,13 @@
         
         .section-title h2 {
             font-size: 36px;
-            color: var(--dark);
+            color: white;
             margin-bottom: 15px;
+            text-shadow: 0 0 10px rgba(255, 0, 255, 0.3);
         }
         
         .section-title p {
-            color: var(--gray);
+            color: #cbd5e1;
             max-width: 600px;
             margin: 0 auto;
         }
@@ -208,36 +265,43 @@
         }
         
         .feature-card {
-            background-color: white;
+            background: rgba(30, 41, 59, 0.7);
             border-radius: 10px;
             padding: 30px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-            transition: transform 0.3s, box-shadow 0.3s;
+            transition: all 0.3s;
+            border: 1px solid rgba(255, 105, 180, 0.2);
         }
         
         .feature-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2), 0 0 15px rgba(255, 0, 255, 0.2);
+            border-color: rgba(255, 105, 180, 0.5);
         }
         
         .feature-icon {
             font-size: 40px;
-            color: var(--primary);
+            color: var(--pink-light);
             margin-bottom: 20px;
+            text-shadow: 0 0 10px rgba(255, 105, 180, 0.5);
         }
         
         .feature-card h3 {
             font-size: 22px;
             margin-bottom: 15px;
+            color: white;
+        }
+        
+        .feature-card p {
+            color: #cbd5e1;
         }
         
         /* Dashboard Section */
         .dashboard {
-            background-color: white;
+            background: rgba(30, 41, 59, 0.7);
             border-radius: 10px;
             padding: 30px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
             margin-bottom: 30px;
+            border: 1px solid rgba(255, 105, 180, 0.2);
         }
         
         .stats-grid {
@@ -248,21 +312,23 @@
         }
         
         .stat-card {
-            background-color: var(--light);
+            background: rgba(15, 23, 42, 0.7);
             border-radius: 8px;
             padding: 20px;
             text-align: center;
+            border: 1px solid rgba(255, 105, 180, 0.1);
         }
         
         .stat-value {
             font-size: 28px;
             font-weight: 700;
-            color: var(--primary);
+            color: var(--pink-light);
             margin-bottom: 5px;
+            text-shadow: 0 0 5px rgba(255, 105, 180, 0.5);
         }
         
         .stat-label {
-            color: var(--gray);
+            color: #94a3b8;
             font-size: 14px;
         }
         
@@ -273,34 +339,37 @@
         }
         
         .btn-action {
-            background-color: var(--primary);
+            background: linear-gradient(135deg, var(--pink-light), var(--pink-medium));
             color: white;
             border: none;
             padding: 10px 20px;
             border-radius: 5px;
             cursor: pointer;
             font-weight: 500;
-            transition: background-color 0.3s;
+            transition: all 0.3s;
+            box-shadow: 0 0 10px rgba(255, 105, 180, 0.3);
         }
         
         .btn-action:hover {
-            background-color: var(--secondary);
+            background: linear-gradient(135deg, var(--pink-medium), var(--pink-light));
+            box-shadow: 0 0 15px rgba(255, 105, 180, 0.5);
+            transform: translateY(-2px);
         }
         
         .btn-success {
-            background-color: var(--success);
+            background: linear-gradient(135deg, var(--success), #059669);
         }
         
         .btn-warning {
-            background-color: var(--warning);
+            background: linear-gradient(135deg, var(--warning), #d97706);
         }
         
         /* Investment Section */
         .investment-form {
-            background-color: white;
+            background: rgba(30, 41, 59, 0.7);
             border-radius: 10px;
             padding: 30px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(255, 105, 180, 0.2);
         }
         
         .form-group {
@@ -311,19 +380,23 @@
             display: block;
             margin-bottom: 8px;
             font-weight: 500;
+            color: white;
         }
         
         .form-control {
             width: 100%;
             padding: 12px 15px;
-            border: 1px solid #ddd;
+            background: rgba(15, 23, 42, 0.7);
+            border: 1px solid rgba(255, 105, 180, 0.3);
             border-radius: 5px;
             font-size: 16px;
+            color: white;
         }
         
         .form-control:focus {
             outline: none;
-            border-color: var(--accent);
+            border-color: var(--pink-light);
+            box-shadow: 0 0 10px rgba(255, 105, 180, 0.3);
         }
         
         /* FAQ Section */
@@ -333,11 +406,11 @@
         }
         
         .faq-item {
-            background-color: white;
+            background: rgba(30, 41, 59, 0.7);
             border-radius: 8px;
             margin-bottom: 15px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
             overflow: hidden;
+            border: 1px solid rgba(255, 105, 180, 0.2);
         }
         
         .faq-question {
@@ -347,6 +420,7 @@
             justify-content: space-between;
             align-items: center;
             font-weight: 600;
+            color: white;
         }
         
         .faq-answer {
@@ -354,6 +428,7 @@
             max-height: 0;
             overflow: hidden;
             transition: max-height 0.3s, padding 0.3s;
+            color: #cbd5e1;
         }
         
         .faq-item.active .faq-answer {
@@ -363,7 +438,7 @@
         
         /* Footer */
         footer {
-            background-color: var(--dark);
+            background: var(--navy-dark);
             color: white;
             padding: 60px 0 30px;
         }
@@ -378,7 +453,7 @@
         .footer-column h3 {
             font-size: 18px;
             margin-bottom: 20px;
-            color: var(--light);
+            color: var(--pink-light);
         }
         
         .footer-links {
@@ -396,7 +471,7 @@
         }
         
         .footer-links a:hover {
-            color: white;
+            color: var(--pink-light);
         }
         
         .copyright {
@@ -415,10 +490,11 @@
                 top: 70px;
                 left: 0;
                 right: 0;
-                background-color: white;
+                background: rgba(15, 23, 42, 0.95);
                 flex-direction: column;
                 padding: 20px;
                 box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+                border-top: 1px solid rgba(255, 105, 180, 0.2);
             }
             
             .nav-links.active {
@@ -451,12 +527,16 @@
                 max-width: 250px;
                 text-align: center;
             }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
         }
         
         /* Loading Spinner */
         .spinner {
-            border: 4px solid rgba(0, 0, 0, 0.1);
-            border-left-color: var(--primary);
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-left-color: var(--pink-light);
             border-radius: 50%;
             width: 30px;
             height: 30px;
@@ -476,20 +556,22 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
+            background-color: rgba(0, 0, 0, 0.7);
             z-index: 1000;
             justify-content: center;
             align-items: center;
         }
         
         .modal-content {
-            background-color: white;
+            background: var(--navy-medium);
             border-radius: 10px;
             padding: 30px;
             max-width: 500px;
             width: 90%;
             max-height: 90vh;
             overflow-y: auto;
+            border: 1px solid rgba(255, 105, 180, 0.3);
+            box-shadow: 0 0 20px rgba(255, 0, 255, 0.3);
         }
         
         .modal-header {
@@ -502,6 +584,7 @@
         .modal-title {
             font-size: 24px;
             font-weight: 600;
+            color: white;
         }
         
         .close-modal {
@@ -523,40 +606,111 @@
             z-index: 1100;
             display: none;
             max-width: 350px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
         
         .notification.success {
-            background-color: var(--success);
+            background: linear-gradient(135deg, var(--success), #059669);
         }
         
         .notification.error {
-            background-color: var(--danger);
+            background: linear-gradient(135deg, var(--danger), #dc2626);
         }
         
         .notification.warning {
-            background-color: var(--warning);
+            background: linear-gradient(135deg, var(--warning), #d97706);
         }
 
         .network-info {
-            background-color: var(--warning);
+            background: linear-gradient(135deg, var(--warning), #d97706);
             color: white;
             padding: 10px;
             text-align: center;
             display: none;
+        }
+        
+        /* Hamburger Menu */
+        .hamburger-menu {
+            display: none;
+            position: relative;
+        }
+        
+        .hamburger-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 50px;
+            background: rgba(15, 23, 42, 0.95);
+            min-width: 200px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            z-index: 1;
+            border-radius: 5px;
+            border: 1px solid rgba(255, 105, 180, 0.3);
+            overflow: hidden;
+        }
+        
+        .hamburger-content a {
+            color: white;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            transition: background 0.3s;
+        }
+        
+        .hamburger-content a:hover {
+            background: rgba(255, 105, 180, 0.2);
+            color: var(--pink-light);
+        }
+        
+        .hamburger-menu:hover .hamburger-content {
+            display: block;
+        }
+        
+        @media (max-width: 768px) {
+            .hamburger-menu {
+                display: block;
+            }
+        }
+        
+        /* Account Info */
+        .account-info {
+            display: none;
+            background: rgba(15, 23, 42, 0.9);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            border: 1px solid rgba(255, 105, 180, 0.3);
+        }
+        
+        .account-details {
+            margin-bottom: 15px;
+        }
+        
+        .account-details p {
+            margin-bottom: 5px;
+            word-break: break-all;
+        }
+        
+        .account-label {
+            color: var(--pink-light);
+            font-weight: 600;
         }
     </style>
 </head>
 <body>
     <!-- Network Warning -->
     <div class="network-info" id="networkWarning">
-        Please switch to Binance Smart Chain Network
+        <i class="fas fa-exclamation-triangle"></i> Please switch to Binance Smart Chain Network
     </div>
 
     <!-- Header -->
     <header>
         <div class="container">
             <nav class="navbar">
-                <div class="logo">BNB<span>Nest</span></div>
+                <div class="logo">
+                    <img src="https://files.catbox.moe/ej7abf.png" alt="BNBNest Logo">
+                    <span class="glow-text">BNB</span>Nest
+                </div>
                 <ul class="nav-links">
                     <li><a href="#home" class="active">Home</a></li>
                     <li><a href="#invest">Invest</a></li>
@@ -567,8 +721,24 @@
                     <li><a href="#faq">FAQ</a></li>
                     <li><a href="#security">Security</a></li>
                 </ul>
-                <button class="wallet-connect" id="connectWallet">Connect Wallet</button>
-                <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
+                <div class="hamburger-menu">
+                    <button class="mobile-menu-btn" id="mobileMenuBtn">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <div class="hamburger-content">
+                        <a href="#home"><i class="fas fa-home"></i> Home</a>
+                        <a href="#invest"><i class="fas fa-chart-line"></i> Invest</a>
+                        <a href="#dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                        <a href="#referral"><i class="fas fa-users"></i> Referral</a>
+                        <a href="#salary"><i class="fas fa-money-bill-wave"></i> Salary</a>
+                        <a href="#how-to-join"><i class="fas fa-info-circle"></i> How to Join</a>
+                        <a href="#faq"><i class="fas fa-question-circle"></i> FAQ</a>
+                        <a href="#security"><i class="fas fa-shield-alt"></i> Security</a>
+                    </div>
+                </div>
+                <button class="wallet-connect" id="connectWallet">
+                    <i class="fas fa-wallet"></i> Connect Wallet
+                </button>
             </nav>
         </div>
     </header>
@@ -576,11 +746,26 @@
     <!-- Hero Section -->
     <section class="hero" id="home">
         <div class="container">
-            <h1>Smart Investment with BNB Nest</h1>
+            <h1 class="glow-text">Smart Investment with BNB Nest</h1>
             <p>Maximize your returns with our secure and transparent investment platform. Earn daily ROI, referral commissions, and monthly salaries.</p>
             <div class="hero-buttons">
-                <a href="#invest" class="btn btn-primary">Start Investing</a>
-                <a href="#how-to-join" class="btn btn-outline">Learn More</a>
+                <a href="#invest" class="btn btn-primary">
+                    <i class="fas fa-rocket"></i> Invest Now
+                </a>
+                <a href="#how-to-join" class="btn btn-outline">
+                    <i class="fas fa-info-circle"></i> Learn More
+                </a>
+            </div>
+            
+            <!-- Account Info (shown after wallet connection) -->
+            <div class="account-info" id="accountInfo">
+                <div class="account-details">
+                    <p><span class="account-label">Your Address:</span> <span id="userAddress"></span></p>
+                    <p><span class="account-label">Upline Address:</span> <span id="uplineAddress"></span></p>
+                </div>
+                <button class="btn-action" id="disconnectWallet">
+                    <i class="fas fa-sign-out-alt"></i> Disconnect
+                </button>
             </div>
         </div>
     </section>
@@ -594,22 +779,22 @@
             </div>
             <div class="features-grid">
                 <div class="feature-card">
-                    <div class="feature-icon">📈</div>
+                    <div class="feature-icon"><i class="fas fa-chart-line"></i></div>
                     <h3>Daily ROI</h3>
                     <p>Earn between 0.5% to 2.5% daily return on your investment based on TVL growth.</p>
                 </div>
                 <div class="feature-card">
-                    <div class="feature-icon">👥</div>
+                    <div class="feature-icon"><i class="fas fa-users"></i></div>
                     <h3>Referral Program</h3>
                     <p>17-level referral system with commissions from 2% to 20% on your downline's earnings.</p>
                 </div>
                 <div class="feature-card">
-                    <div class="feature-icon">💰</div>
+                    <div class="feature-icon"><i class="fas fa-money-bill-wave"></i></div>
                     <h3>Monthly Salary</h3>
                     <p>Qualify for monthly salary tiers based on your deposit and referral network.</p>
                 </div>
                 <div class="feature-card">
-                    <div class="feature-icon">🔒</div>
+                    <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
                     <h3>Secure & Transparent</h3>
                     <p>Verified smart contract with locked capital period and transparent fee structure.</p>
                 </div>
@@ -644,10 +829,18 @@
                     </div>
                 </div>
                 <div class="action-buttons">
-                    <button class="btn-action" id="claimROI">Claim ROI</button>
-                    <button class="btn-action btn-success" id="claimReferral">Claim Referral Rewards</button>
-                    <button class="btn-action btn-warning" id="withdrawCapital">Withdraw Capital</button>
-                    <button class="btn-action" id="claimSalary">Claim Monthly Salary</button>
+                    <button class="btn-action" id="claimROI">
+                        <i class="fas fa-coins"></i> Claim ROI
+                    </button>
+                    <button class="btn-action btn-success" id="claimReferral">
+                        <i class="fas fa-user-friends"></i> Claim Referral Rewards
+                    </button>
+                    <button class="btn-action btn-warning" id="withdrawCapital">
+                        <i class="fas fa-hand-holding-usd"></i> Withdraw Capital
+                    </button>
+                    <button class="btn-action" id="claimSalary">
+                        <i class="fas fa-calendar-alt"></i> Claim Monthly Salary
+                    </button>
                 </div>
             </div>
         </div>
@@ -662,14 +855,20 @@
             </div>
             <div class="investment-form">
                 <div class="form-group">
-                    <label for="depositAmount">Deposit Amount (Minimum: 10 USDT)</label>
+                    <label for="depositAmount">
+                        <i class="fas fa-money-bill-wave"></i> Deposit Amount (Minimum: 10 USDT)
+                    </label>
                     <input type="number" id="depositAmount" class="form-control" placeholder="Enter amount in USDT" min="10">
                 </div>
                 <div class="form-group">
-                    <label for="referrerAddress">Referrer Address (Optional)</label>
+                    <label for="referrerAddress">
+                        <i class="fas fa-user-plus"></i> Referrer Address (Optional)
+                    </label>
                     <input type="text" id="referrerAddress" class="form-control" placeholder="Enter referrer's wallet address">
                 </div>
-                <button class="btn-action" id="depositBtn">Deposit USDT</button>
+                <button class="btn-action" id="depositBtn">
+                    <i class="fas fa-piggy-bank"></i> Deposit USDT
+                </button>
             </div>
         </div>
     </section>
@@ -682,12 +881,14 @@
                 <p>Earn commissions from 17 levels of your referral network with our tier-based system.</p>
             </div>
             <div class="dashboard">
-                <h3>Your Referral Link</h3>
+                <h3><i class="fas fa-link"></i> Your Referral Link</h3>
                 <div class="form-group">
                     <input type="text" id="referralLink" class="form-control" readonly>
-                    <button class="btn-action" id="copyReferral">Copy Link</button>
+                    <button class="btn-action" id="copyReferral">
+                        <i class="fas fa-copy"></i> Copy Link
+                    </button>
                 </div>
-                <h3>Platform Statistics</h3>
+                <h3><i class="fas fa-chart-bar"></i> Platform Statistics</h3>
                 <div class="stats-grid">
                     <div class="stat-card">
                         <div class="stat-value" id="totalTVL">0 USDT</div>
@@ -732,22 +933,22 @@
             </div>
             <div class="features-grid">
                 <div class="feature-card">
-                    <div class="feature-icon">1</div>
+                    <div class="feature-icon"><i class="fas fa-wallet"></i></div>
                     <h3>Connect Wallet</h3>
                     <p>Connect your BSC-compatible wallet like MetaMask or Trust Wallet.</p>
                 </div>
                 <div class="feature-card">
-                    <div class="feature-icon">2</div>
+                    <div class="feature-icon"><i class="fas fa-piggy-bank"></i></div>
                     <h3>Deposit USDT</h3>
                     <p>Deposit a minimum of 10 USDT to activate your investment account.</p>
                 </div>
                 <div class="feature-card">
-                    <div class="feature-icon">3</div>
+                    <div class="feature-icon"><i class="fas fa-chart-line"></i></div>
                     <h3>Start Earning</h3>
                     <p>Begin earning daily ROI, build your referral network, and qualify for monthly salaries.</p>
                 </div>
                 <div class="feature-card">
-                    <div class="feature-icon">4</div>
+                    <div class="feature-icon"><i class="fas fa-hand-holding-usd"></i></div>
                     <h3>Claim Rewards</h3>
                     <p>Regularly claim your ROI, referral commissions, and monthly salary.</p>
                 </div>
@@ -821,22 +1022,22 @@
             </div>
             <div class="features-grid">
                 <div class="feature-card">
-                    <div class="feature-icon">🔍</div>
+                    <div class="feature-icon"><i class="fas fa-search"></i></div>
                     <h3>Verified Contract</h3>
                     <p>Our smart contract is verified on BscScan, ensuring transparency and security.</p>
                 </div>
                 <div class="feature-card">
-                    <div class="feature-icon">🔒</div>
+                    <div class="feature-icon"><i class="fas fa-lock"></i></div>
                     <h3>No Admin Withdrawals</h3>
                     <p>Funds are secured in the contract with no ability for admin to withdraw user deposits.</p>
                 </div>
                 <div class="feature-card">
-                    <div class="feature-icon">📊</div>
+                    <div class="feature-icon"><i class="fas fa-chart-pie"></i></div>
                     <h3>Transparent Fees</h3>
                     <p>Clear fee structure: 15% deposit fee, 10% capital withdrawal fee after lock period.</p>
                 </div>
                 <div class="feature-card">
-                    <div class="feature-icon">⏱️</div>
+                    <div class="feature-icon"><i class="fas fa-clock"></i></div>
                     <h3>Lock Period</h3>
                     <p>28-day lock period ensures stability and prevents premature withdrawals.</p>
                 </div>
@@ -851,34 +1052,34 @@
                 <div class="footer-column">
                     <h3>BNBNest</h3>
                     <ul class="footer-links">
-                        <li><a href="#home">Home</a></li>
-                        <li><a href="#invest">Invest</a></li>
-                        <li><a href="#dashboard">Dashboard</a></li>
-                        <li><a href="#referral">Referral</a></li>
+                        <li><a href="#home"><i class="fas fa-home"></i> Home</a></li>
+                        <li><a href="#invest"><i class="fas fa-chart-line"></i> Invest</a></li>
+                        <li><a href="#dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                        <li><a href="#referral"><i class="fas fa-users"></i> Referral</a></li>
                     </ul>
                 </div>
                 <div class="footer-column">
                     <h3>Resources</h3>
                     <ul class="footer-links">
-                        <li><a href="#how-to-join">How to Join</a></li>
-                        <li><a href="#faq">FAQ</a></li>
-                        <li><a href="#security">Security</a></li>
+                        <li><a href="#how-to-join"><i class="fas fa-info-circle"></i> How to Join</a></li>
+                        <li><a href="#faq"><i class="fas fa-question-circle"></i> FAQ</a></li>
+                        <li><a href="#security"><i class="fas fa-shield-alt"></i> Security</a></li>
                     </ul>
                 </div>
                 <div class="footer-column">
                     <h3>Legal</h3>
                     <ul class="footer-links">
-                        <li><a href="#">Privacy Policy</a></li>
-                        <li><a href="#">Terms of Service</a></li>
-                        <li><a href="#">Risk Disclosure</a></li>
+                        <li><a href="#"><i class="fas fa-user-shield"></i> Privacy Policy</a></li>
+                        <li><a href="#"><i class="fas fa-file-contract"></i> Terms of Service</a></li>
+                        <li><a href="#"><i class="fas fa-exclamation-triangle"></i> Risk Disclosure</a></li>
                     </ul>
                 </div>
                 <div class="footer-column">
                     <h3>Connect</h3>
                     <ul class="footer-links">
-                        <li><a href="#">Telegram</a></li>
-                        <li><a href="#">Twitter</a></li>
-                        <li><a href="#">Medium</a></li>
+                        <li><a href="#"><i class="fab fa-telegram"></i> Telegram</a></li>
+                        <li><a href="#"><i class="fab fa-twitter"></i> Twitter</a></li>
+                        <li><a href="#"><i class="fab fa-medium"></i> Medium</a></li>
                     </ul>
                 </div>
             </div>
@@ -900,148 +1101,11 @@
     </div>
 
     <script>
-        // Contract ABI - Simplified version matching your contract
-        const contractABI = [
-            {
-                "inputs": [{"internalType": "address", "name": "_usdtAddress", "type": "address"}],
-                "stateMutability": "nonpayable",
-                "type": "constructor"
-            },
-            {
-                "anonymous": false,
-                "inputs": [{"indexed": true, "internalType": "address", "name": "user", "type": "address"}, {"indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256"}, {"indexed": false, "internalType": "address", "name": "referrer", "type": "address"}],
-                "name": "Deposited",
-                "type": "event"
-            },
-            {
-                "anonymous": false,
-                "inputs": [{"indexed": true, "internalType": "address", "name": "user", "type": "address"}, {"indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256"}],
-                "name": "ROIClaimed",
-                "type": "event"
-            },
-            {
-                "anonymous": false,
-                "inputs": [{"indexed": true, "internalType": "address", "name": "user", "type": "address"}, {"indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256"}, {"indexed": false, "internalType": "uint256", "name": "fee", "type": "uint256"}],
-                "name": "CapitalWithdrawn",
-                "type": "event"
-            },
-            {
-                "anonymous": false,
-                "inputs": [{"indexed": true, "internalType": "address", "name": "user", "type": "address"}, {"indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256"}],
-                "name": "ReferralRewardClaimed",
-                "type": "event"
-            },
-            {
-                "anonymous": false,
-                "inputs": [{"indexed": true, "internalType": "address", "name": "user", "type": "address"}, {"indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256"}, {"indexed": false, "internalType": "enum BNBNest.SalaryTier", "name": "tier", "type": "uint8"}],
-                "name": "SalaryClaimed",
-                "type": "event"
-            },
-            {
-                "inputs": [{"internalType": "uint256", "name": "amount", "type": "uint256"}, {"internalType": "address", "name": "referrer", "type": "address"}],
-                "name": "deposit",
-                "outputs": [],
-                "stateMutability": "nonpayable",
-                "type": "function"
-            },
-            {
-                "inputs": [],
-                "name": "claimROI",
-                "outputs": [],
-                "stateMutability": "nonpayable",
-                "type": "function"
-            },
-            {
-                "inputs": [],
-                "name": "withdrawCapital",
-                "outputs": [],
-                "stateMutability": "nonpayable",
-                "type": "function"
-            },
-            {
-                "inputs": [],
-                "name": "claimReferralRewards",
-                "outputs": [],
-                "stateMutability": "nonpayable",
-                "type": "function"
-            },
-            {
-                "inputs": [],
-                "name": "claimMonthlySalary",
-                "outputs": [],
-                "stateMutability": "nonpayable",
-                "type": "function"
-            },
-            {
-                "inputs": [{"internalType": "address", "name": "userAddress", "type": "address"}],
-                "name": "getUserInfo",
-                "outputs": [
-                    {"internalType": "uint256", "name": "userDeposit", "type": "uint256"},
-                    {"internalType": "uint256", "name": "userDepositTime", "type": "uint256"},
-                    {"internalType": "uint256", "name": "userLastROIClaim", "type": "uint256"},
-                    {"internalType": "uint256", "name": "userClaimedROI", "type": "uint256"},
-                    {"internalType": "uint256", "name": "userReferralRewards", "type": "uint256"},
-                    {"internalType": "uint256", "name": "userLastSalaryClaim", "type": "uint256"},
-                    {"internalType": "address", "name": "userReferrer", "type": "address"},
-                    {"internalType": "enum BNBNest.SalaryTier", "name": "userSalaryTier", "type": "uint8"},
-                    {"internalType": "uint256", "name": "userPendingROI", "type": "uint256"}
-                ],
-                "stateMutability": "view",
-                "type": "function"
-            },
-            {
-                "inputs": [],
-                "name": "getCurrentROI",
-                "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],
-                "stateMutability": "view",
-                "type": "function"
-            },
-            {
-                "inputs": [{"internalType": "address", "name": "userAddress", "type": "address"}],
-                "name": "calculatePendingROI",
-                "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],
-                "stateMutability": "view",
-                "type": "function"
-            },
-            {
-                "inputs": [{"internalType": "address", "name": "userAddress", "type": "address"}],
-                "name": "canClaimSalary",
-                "outputs": [{"internalType": "bool", "name": "", "type": "bool"}],
-                "stateMutability": "view",
-                "type": "function"
-            },
-            {
-                "inputs": [{"internalType": "address", "name": "userAddress", "type": "address"}],
-                "name": "canWithdrawCapital",
-                "outputs": [{"internalType": "bool", "name": "", "type": "bool"}],
-                "stateMutability": "view",
-                "type": "function"
-            },
-            {
-                "inputs": [],
-                "name": "totalTVL",
-                "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],
-                "stateMutability": "view",
-                "type": "function"
-            },
-            {
-                "inputs": [],
-                "name": "totalUsers",
-                "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],
-                "stateMutability": "view",
-                "type": "function"
-            },
-            {
-                "inputs": [],
-                "name": "MIN_DEPOSIT",
-                "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],
-                "stateMutability": "view",
-                "type": "function"
-            }
-        ];
+        // Contract ABI - Using the provided ABI
+        const contractABI = [{"inputs":[{"internalType":"address","name":"_usdtAddress","type":"address"}],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"fee","type":"uint256"}],"name":"CapitalWithdrawn","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"},{"indexed":false,"internalType":"address","name":"referrer","type":"address"}],"name":"Deposited","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"ROIClaimed","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"referrer","type":"address"},{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"},{"indexed":false,"internalType":"uint8","name":"level","type":"uint8"}],"name":"ReferralCommission","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"ReferralRewardClaimed","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"},{"indexed":false,"internalType":"enum BNBNest.SalaryTier","name":"tier","type":"uint8"}],"name":"SalaryClaimed","type":"event"},{"inputs":[],"name":"BASE_ROI","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"CAPITAL_WITHDRAWAL_FEE","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"DEPOSIT_FEE_PERCENT","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"FEE_WALLET","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"LOCK_PERIOD","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"MAX_ROI","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"MIN_DEPOSIT","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"ROI_STEP","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"TVL_STEP","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"userAddress","type":"address"}],"name":"calculatePendingROI","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"userAddress","type":"address"}],"name":"canClaimSalary","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"userAddress","type":"address"}],"name":"canWithdrawCapital","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"claimMonthlySalary","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"claimROI","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"claimReferralRewards","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"address","name":"referrer","type":"address"}],"name":"deposit","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"emergencyWithdraw","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"getContractBalance","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getCurrentROI","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"userAddress","type":"address"},{"internalType":"uint8","name":"level","type":"uint8"}],"name":"getReferralCount","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"userAddress","type":"address"}],"name":"getUserInfo","outputs":[{"internalType":"uint256","name":"userDeposit","type":"uint256"},{"internalType":"uint256","name":"userDepositTime","type":"uint256"},{"internalType":"uint256","name":"userLastROIClaim","type":"uint256"},{"internalType":"uint256","name":"userClaimedROI","type":"uint256"},{"internalType":"uint256","name":"userReferralRewards","type":"uint256"},{"internalType":"uint256","name":"userLastSalaryClaim","type":"uint256"},{"internalType":"address","name":"userReferrer","type":"address"},{"internalType":"enum BNBNest.SalaryTier","name":"userSalaryTier","type":"uint8"},{"internalType":"uint256","name":"userPendingROI","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"},{"internalType":"uint8","name":"","type":"uint8"}],"name":"referralCounts","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"referralTiers","outputs":[{"internalType":"uint256","name":"minDeposit","type":"uint256"},{"internalType":"uint256","name":"commissionPercent","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"enum BNBNest.SalaryTier","name":"","type":"uint8"}],"name":"salaryConfigs","outputs":[{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"uint256","name":"minDeposit","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"newOwner","type":"address"}],"name":"setOwner","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"totalTVL","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"totalUsers","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"usdt","outputs":[{"internalType":"contract IERC20","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"users","outputs":[{"internalType":"uint256","name":"deposit","type":"uint256"},{"internalType":"uint256","name":"depositTime","type":"uint256"},{"internalType":"uint256","name":"lastROIClaim","type":"uint256"},{"internalType":"uint256","name":"claimedROI","type":"uint256"},{"internalType":"uint256","name":"referralRewards","type":"uint256"},{"internalType":"uint256","name":"lastSalaryClaim","type":"uint256"},{"internalType":"address","name":"referrer","type":"address"},{"internalType":"enum BNBNest.SalaryTier","name":"salaryTier","type":"uint8"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"withdrawCapital","outputs":[],"stateMutability":"nonpayable","type":"function"}];
 
         // Contract address (REPLACE WITH YOUR ACTUAL CONTRACT ADDRESS)
-        const contractAddress = "0x36622C46Ba53BBfaeBa618ED035BBB6CD67017B0"; // Replace with actual contract address
+        const contractAddress = "0x36622C46Ba53BBfaeBa618ED035BBB6CD67017B0"; // Using the provided contract address
         
         // BSC Mainnet details
         const BSC_MAINNET_PARAMS = {
@@ -1084,6 +1148,10 @@
         const loadingModal = document.getElementById('loadingModal');
         const loadingText = document.getElementById('loadingText');
         const networkWarning = document.getElementById('networkWarning');
+        const accountInfo = document.getElementById('accountInfo');
+        const userAddressEl = document.getElementById('userAddress');
+        const uplineAddressEl = document.getElementById('uplineAddress');
+        const disconnectWalletBtn = document.getElementById('disconnectWallet');
 
         // Initialize the application
         document.addEventListener('DOMContentLoaded', function() {
@@ -1111,6 +1179,9 @@
             
             // Initialize contract interaction buttons
             initContractInteractions();
+            
+            // Disconnect wallet button
+            disconnectWalletBtn.addEventListener('click', disconnectWallet);
         });
 
         // Initialize Web3
@@ -1229,11 +1300,23 @@
             }
         }
 
+        // Disconnect wallet function
+        function disconnectWallet() {
+            userAccount = null;
+            isConnected = false;
+            updateUI();
+            showNotification('Wallet disconnected!', 'warning');
+        }
+
         // Update UI based on connection status
         async function updateUI() {
             if (isConnected && userAccount) {
-                connectWalletBtn.textContent = `${userAccount.substring(0, 6)}...${userAccount.substring(38)}`;
+                connectWalletBtn.innerHTML = `<i class="fas fa-wallet"></i> ${userAccount.substring(0, 6)}...${userAccount.substring(38)}`;
                 connectWalletBtn.classList.add('wallet-connected');
+                
+                // Show account info
+                accountInfo.style.display = 'block';
+                userAddressEl.textContent = userAccount;
                 
                 // Update referral link
                 document.getElementById('referralLink').value = `${window.location.origin}?ref=${userAccount}`;
@@ -1242,8 +1325,19 @@
                 await loadUserData();
                 await loadPlatformStats();
             } else {
-                connectWalletBtn.textContent = 'Connect Wallet';
+                connectWalletBtn.innerHTML = '<i class="fas fa-wallet"></i> Connect Wallet';
                 connectWalletBtn.classList.remove('wallet-connected');
+                
+                // Hide account info
+                accountInfo.style.display = 'none';
+                
+                // Reset dashboard values
+                document.getElementById('userDeposit').textContent = '0 USDT';
+                document.getElementById('pendingROI').textContent = '0 USDT';
+                document.getElementById('claimedROI').textContent = '0 USDT';
+                document.getElementById('referralRewards').textContent = '0 USDT';
+                document.getElementById('currentTier').textContent = 'None';
+                document.getElementById('tierRequirements').textContent = 'Connect your wallet to see tier requirements.';
             }
         }
 
@@ -1257,13 +1351,24 @@
                 
                 // Update dashboard (USDT has 6 decimals)
                 document.getElementById('userDeposit').textContent = `${(userInfo.userDeposit / 1e6).toFixed(2)} USDT`;
-                document.getElementById('pendingROI').textContent = `${(userInfo.userPendingROI / 1e6).toFixed(2)} USDT`;
+                
+                // Calculate pending ROI
+                const pendingROI = await contract.methods.calculatePendingROI(userAccount).call();
+                document.getElementById('pendingROI').textContent = `${(pendingROI / 1e6).toFixed(2)} USDT`;
+                
                 document.getElementById('claimedROI').textContent = `${(userInfo.userClaimedROI / 1e6).toFixed(2)} USDT`;
                 document.getElementById('referralRewards').textContent = `${(userInfo.userReferralRewards / 1e6).toFixed(2)} USDT`;
                 
                 // Update salary tier
                 const tierNames = ['None', 'Pioneer', 'Visionary', 'Architect', 'Maverick', 'Legendary'];
                 document.getElementById('currentTier').textContent = tierNames[userInfo.userSalaryTier];
+                
+                // Update upline address
+                if (userInfo.userReferrer !== '0x0000000000000000000000000000000000000000') {
+                    uplineAddressEl.textContent = userInfo.userReferrer;
+                } else {
+                    uplineAddressEl.textContent = 'No upline';
+                }
                 
                 // Load salary tiers display
                 loadSalaryTiersDisplay();
