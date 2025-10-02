@@ -6,6 +6,7 @@
     <title>BNBNest - Smart Investment Platform</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
     <style>
         :root {
             --pink: #ff2d75;
@@ -245,8 +246,14 @@
             background: rgba(255, 45, 117, 0.1);
         }
 
+        .btn-icon {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
         .wallet-status {
-            margin-top: 30px;
+            margin-top: 50px;
             display: none;
         }
 
@@ -400,6 +407,24 @@
             border-radius: 10px;
             padding: 20px;
             text-align: center;
+            position: relative;
+        }
+
+        .info-box.expiry {
+            border: 1px solid rgba(255, 45, 117, 0.3);
+        }
+
+        .expiry-label {
+            font-size: 14px;
+            color: var(--light-purple);
+            margin-bottom: 5px;
+        }
+
+        .expiry-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--pink);
+            font-family: 'Orbitron', sans-serif;
         }
 
         .info-value {
@@ -407,15 +432,6 @@
             font-weight: 700;
             margin: 10px 0;
             color: var(--pink);
-        }
-
-        .countdown {
-            font-size: 28px;
-            font-weight: 700;
-            text-align: center;
-            margin: 30px 0;
-            color: var(--pink);
-            font-family: 'Orbitron', sans-serif;
         }
 
         .dashboard-actions {
@@ -476,7 +492,7 @@
             border-radius: 15px;
             padding: 40px;
             border: 1px solid rgba(255, 45, 117, 0.2);
-            max-width: 800px;
+            max-width: 1000px;
             margin: 0 auto;
         }
 
@@ -510,6 +526,39 @@
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 20px;
             margin-bottom: 30px;
+        }
+
+        .referral-levels {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .level-box {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            border: 1px solid rgba(255, 45, 117, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .level-box:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(255, 45, 117, 0.3);
+        }
+
+        .level-number {
+            font-size: 14px;
+            color: var(--light-purple);
+            margin-bottom: 5px;
+        }
+
+        .level-percent {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--pink);
         }
 
         /* Salary Section */
@@ -807,6 +856,21 @@
             color: var(--light-purple);
         }
 
+        /* Loading */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .hero h1 {
@@ -837,6 +901,10 @@
             .referral-link button {
                 border-radius: 0 0 10px 10px;
                 padding: 15px;
+            }
+            
+            .referral-levels {
+                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
             }
         }
     </style>
@@ -900,18 +968,20 @@
                 <a href="#invest" class="btn">Invest Now</a>
             </div>
 
-            <div class="stats-grid">
-                <div class="stat-box">
-                    <div class="stat-value" id="totalTVL">$0</div>
-                    <div class="stat-label">Total Value Locked</div>
-                </div>
-                <div class="stat-box">
-                    <div class="stat-value" id="totalUsers">0</div>
-                    <div class="stat-label">Total Users</div>
-                </div>
-                <div class="stat-box">
-                    <div class="stat-value" id="currentROI">0%</div>
-                    <div class="stat-label">Current Daily ROI</div>
+            <div class="stats">
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <div class="stat-value" id="totalTVL">$0</div>
+                        <div class="stat-label">Total Value Locked</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" id="totalUsers">0</div>
+                        <div class="stat-label">Total Users</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" id="currentROI">0%</div>
+                        <div class="stat-label">Current Daily ROI</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -966,6 +1036,10 @@
             </div>
             <div class="dashboard-container">
                 <div class="dashboard-info">
+                    <div class="info-box expiry">
+                        <div class="expiry-label">Expires In</div>
+                        <div class="expiry-value" id="countdown">28 days 00:00:00</div>
+                    </div>
                     <div class="info-box">
                         <div class="info-label">Active Deposit</div>
                         <div class="info-value" id="userDeposit">0 USDT</div>
@@ -979,10 +1053,13 @@
                         <div class="info-value" id="claimedROI">0 USDT</div>
                     </div>
                 </div>
-                <div class="countdown" id="countdown">28 days 00:00:00</div>
                 <div class="dashboard-actions">
-                    <button class="btn" id="claimROI">Claim ROI</button>
-                    <button class="btn btn-secondary" id="withdrawCapital">Withdraw Capital</button>
+                    <button class="btn btn-icon" id="claimROI">
+                        <i class="fas fa-coins"></i> Claim ROI
+                    </button>
+                    <button class="btn btn-secondary btn-icon" id="withdrawCapital">
+                        <i class="fas fa-wallet"></i> Withdraw Capital
+                    </button>
                 </div>
             </div>
         </div>
@@ -1000,11 +1077,17 @@
                     <label for="depositAmount">Deposit Amount (USDT)</label>
                     <input type="number" id="depositAmount" min="10" placeholder="Minimum 10 USDT">
                 </div>
+                <div class="input-group">
+                    <label for="referrerAddress">Referrer Address (Optional)</label>
+                    <input type="text" id="referrerAddress" placeholder="Enter referrer wallet address">
+                </div>
                 <div class="roi-info">
                     <p>Estimated Daily ROI: <span id="estimatedROI">0.5% - 2.5%</span></p>
                     <p>Based on current TVL: <span id="currentTVL">$0</span></p>
                 </div>
-                <button class="btn" id="investBtn" style="width: 100%;">Invest Now</button>
+                <button class="btn btn-icon" id="investBtn" style="width: 100%;">
+                    <i class="fas fa-rocket"></i> Invest Now
+                </button>
             </div>
         </div>
     </section>
@@ -1019,8 +1102,42 @@
             <div class="referral-container">
                 <div class="referral-link">
                     <input type="text" id="referralLink" value="https://bnbnest.com/ref=0x0000000000000000000000000000000000000000" readonly>
-                    <button id="copyLink">Copy Link</button>
+                    <button id="copyLink">
+                        <i class="fas fa-copy"></i> Copy
+                    </button>
                 </div>
+                
+                <div class="referral-levels">
+                    <div class="level-box">
+                        <div class="level-number">Level 1</div>
+                        <div class="level-percent">20%</div>
+                    </div>
+                    <div class="level-box">
+                        <div class="level-number">Level 2</div>
+                        <div class="level-percent">10%</div>
+                    </div>
+                    <div class="level-box">
+                        <div class="level-number">Level 3-6</div>
+                        <div class="level-percent">5%</div>
+                    </div>
+                    <div class="level-box">
+                        <div class="level-number">Level 7-10</div>
+                        <div class="level-percent">3%</div>
+                    </div>
+                    <div class="level-box">
+                        <div class="level-number">Level 11-14</div>
+                        <div class="level-percent">2%</div>
+                    </div>
+                    <div class="level-box">
+                        <div class="level-number">Level 15-16</div>
+                        <div class="level-percent">5%</div>
+                    </div>
+                    <div class="level-box">
+                        <div class="level-number">Level 17</div>
+                        <div class="level-percent">10%</div>
+                    </div>
+                </div>
+                
                 <div class="referral-stats">
                     <div class="info-box">
                         <div class="info-label">Referral Rewards</div>
@@ -1031,7 +1148,9 @@
                         <div class="info-value" id="totalReferrals">0</div>
                     </div>
                 </div>
-                <button class="btn" id="claimReferral" style="width: 100%;">Claim Referral Rewards</button>
+                <button class="btn btn-icon" id="claimReferral" style="width: 100%;">
+                    <i class="fas fa-gift"></i> Claim Referral Rewards
+                </button>
             </div>
         </div>
     </section>
@@ -1051,7 +1170,9 @@
                         <li>50 USDT deposit</li>
                         <li>10 direct referrals</li>
                     </ul>
-                    <button class="btn btn-secondary" disabled>Claim Salary</button>
+                    <button class="btn btn-secondary btn-icon" disabled>
+                        <i class="fas fa-lock"></i> Claim Salary
+                    </button>
                 </div>
                 <div class="tier-card locked">
                     <div class="tier-name">Visionary</div>
@@ -1060,7 +1181,9 @@
                         <li>100 USDT deposit</li>
                         <li>15 direct + 15 level 2 referrals</li>
                     </ul>
-                    <button class="btn btn-secondary" disabled>Claim Salary</button>
+                    <button class="btn btn-secondary btn-icon" disabled>
+                        <i class="fas fa-lock"></i> Claim Salary
+                    </button>
                 </div>
                 <div class="tier-card locked">
                     <div class="tier-name">Architect</div>
@@ -1069,7 +1192,9 @@
                         <li>130 USDT deposit</li>
                         <li>20 referrals at levels 1-3</li>
                     </ul>
-                    <button class="btn btn-secondary" disabled>Claim Salary</button>
+                    <button class="btn btn-secondary btn-icon" disabled>
+                        <i class="fas fa-lock"></i> Claim Salary
+                    </button>
                 </div>
                 <div class="tier-card locked">
                     <div class="tier-name">Maverick</div>
@@ -1078,7 +1203,9 @@
                         <li>150 USDT deposit</li>
                         <li>30 referrals at levels 1-4</li>
                     </ul>
-                    <button class="btn btn-secondary" disabled>Claim Salary</button>
+                    <button class="btn btn-secondary btn-icon" disabled>
+                        <i class="fas fa-lock"></i> Claim Salary
+                    </button>
                 </div>
                 <div class="tier-card locked">
                     <div class="tier-name">Legendary</div>
@@ -1087,7 +1214,9 @@
                         <li>230 USDT deposit</li>
                         <li>40 referrals at levels 1-5</li>
                     </ul>
-                    <button class="btn btn-secondary" disabled>Claim Salary</button>
+                    <button class="btn btn-secondary btn-icon" disabled>
+                        <i class="fas fa-lock"></i> Claim Salary
+                    </button>
                 </div>
             </div>
         </div>
@@ -1220,7 +1349,9 @@
                 </div>
             </div>
             <div style="text-align: center; margin-top: 40px;">
-                <a href="https://bscscan.com/address/0x36622c46ba53bbfaeba618ed035bbb6cd67017b0#code" target="_blank" class="btn">View on BSCScan</a>
+                <a href="https://bscscan.com/address/0x36622c46ba53bbfaeba618ed035bbb6cd67017b0#code" target="_blank" class="btn btn-icon">
+                    <i class="fas fa-external-link-alt"></i> View on BSCScan
+                </a>
             </div>
         </div>
     </section>
@@ -1264,11 +1395,22 @@
             </div>
             <h3>Investment Successful!</h3>
             <p>Your investment has been processed successfully. You can now start earning daily ROI.</p>
-            <button class="btn" id="goToDashboard">Go to Your Dashboard</button>
+            <button class="btn btn-icon" id="goToDashboard">
+                <i class="fas fa-tachometer-alt"></i> Go to Your Dashboard
+            </button>
         </div>
     </div>
 
     <script>
+        // Contract Configuration
+        const CONTRACT_ADDRESS = '0x36622C46Ba53BBfaeBa618ED035BBB6CD67017B0';
+        const CONTRACT_ABI = [{"inputs":[{"internalType":"address","name":"_usdtAddress","type":"address"}],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"fee","type":"uint256"}],"name":"CapitalWithdrawn","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"},{"indexed":false,"internalType":"address","name":"referrer","type":"address"}],"name":"Deposited","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"ROIClaimed","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"referrer","type":"address"},{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"},{"indexed":false,"internalType":"uint8","name":"level","type":"uint8"}],"name":"ReferralCommission","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"ReferralRewardClaimed","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"},{"indexed":false,"internalType":"enum BNBNest.SalaryTier","name":"tier","type":"uint8"}],"name":"SalaryClaimed","type":"event"},{"inputs":[],"name":"BASE_ROI","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"CAPITAL_WITHDRAWAL_FEE","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"DEPOSIT_FEE_PERCENT","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"FEE_WALLET","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"LOCK_PERIOD","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"MAX_ROI","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"MIN_DEPOSIT","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"ROI_STEP","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"TVL_STEP","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"userAddress","type":"address"}],"name":"calculatePendingROI","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"userAddress","type":"address"}],"name":"canClaimSalary","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"userAddress","type":"address"}],"name":"canWithdrawCapital","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"claimMonthlySalary","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"claimROI","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"claimReferralRewards","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"address","name":"referrer","type":"address"}],"name":"deposit","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"emergencyWithdraw","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"getContractBalance","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getCurrentROI","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"userAddress","type":"address"},{"internalType":"uint8","name":"level","type":"uint8"}],"name":"getReferralCount","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"userAddress","type":"address"}],"name":"getUserInfo","outputs":[{"internalType":"uint256","name":"userDeposit","type":"uint256"},{"internalType":"uint256","name":"userDepositTime","type":"uint256"},{"internalType":"uint256","name":"userLastROIClaim","type":"uint256"},{"internalType":"uint256","name":"userClaimedROI","type":"uint256"},{"internalType":"uint256","name":"userReferralRewards","type":"uint256"},{"internalType":"uint256","name":"userLastSalaryClaim","type":"uint256"},{"internalType":"address","name":"userReferrer","type":"address"},{"internalType":"enum BNBNest.SalaryTier","name":"userSalaryTier","type":"uint8"},{"internalType":"uint256","name":"userPendingROI","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"},{"internalType":"uint8","name":"","type":"uint8"}],"name":"referralCounts","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"referralTiers","outputs":[{"internalType":"uint256","name":"minDeposit","type":"uint256"},{"internalType":"uint256","name":"commissionPercent","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"enum BNBNest.SalaryTier","name":"","type":"uint8"}],"name":"salaryConfigs","outputs":[{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"uint256","name":"minDeposit","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"newOwner","type":"address"}],"name":"setOwner","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"totalTVL","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"totalUsers","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"usdt","outputs":[{"internalType":"contract IERC20","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"users","outputs":[{"internalType":"uint256","name":"deposit","type":"uint256"},{"internalType":"uint256","name":"depositTime","type":"uint256"},{"internalType":"uint256","name":"lastROIClaim","type":"uint256"},{"internalType":"uint256","name":"claimedROI","type":"uint256"},{"internalType":"uint256","name":"referralRewards","type":"uint256"},{"internalType":"uint256","name":"lastSalaryClaim","type":"uint256"},{"internalType":"address","name":"referrer","type":"address"},{"internalType":"enum BNBNest.SalaryTier","name":"salaryTier","type":"uint8"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"withdrawCapital","outputs":[],"stateMutability":"nonpayable","type":"function"}];
+
+        // Global Variables
+        let web3;
+        let contract;
+        let account;
+
         // Mobile Menu Toggle
         const hamburger = document.getElementById('hamburger');
         const mobileMenu = document.getElementById('mobileMenu');
@@ -1318,70 +1460,209 @@
             document.execCommand('copy');
             
             // Show feedback
-            const originalText = copyLinkBtn.textContent;
-            copyLinkBtn.textContent = 'Copied!';
+            const originalText = copyLinkBtn.innerHTML;
+            copyLinkBtn.innerHTML = '<i class="fas fa-check"></i> Copied!';
             setTimeout(() => {
-                copyLinkBtn.textContent = originalText;
+                copyLinkBtn.innerHTML = originalText;
             }, 2000);
         });
 
-        // Connect Wallet Simulation
+        // Connect Wallet
         const connectWalletBtn = document.getElementById('connectWallet');
         const walletStatus = document.getElementById('walletStatus');
         const walletAddress = document.getElementById('walletAddress');
 
-        connectWalletBtn.addEventListener('click', () => {
-            // In a real implementation, this would connect to a Web3 wallet
-            // For demonstration, we'll simulate a connection
-            
-            // Generate a fake wallet address for demo
-            const fakeAddress = '0x' + Math.random().toString(16).substr(2, 40);
-            
-            // Update UI
-            connectWalletBtn.style.display = 'none';
-            walletStatus.style.display = 'block';
-            walletAddress.textContent = fakeAddress;
-            
-            // Update stats with fake data
-            document.getElementById('totalTVL').textContent = '$1,245,678';
-            document.getElementById('totalUsers').textContent = '2,847';
-            document.getElementById('currentROI').textContent = '1.8%';
-            
-            // Update dashboard with fake data
-            document.getElementById('userDeposit').textContent = '100 USDT';
-            document.getElementById('pendingROI').textContent = '12.5 USDT';
-            document.getElementById('claimedROI').textContent = '45.2 USDT';
-            
-            // Update referral stats
-            document.getElementById('referralRewards').textContent = '25.7 USDT';
-            document.getElementById('totalReferrals').textContent = '15';
-            
-            // Update referral link with fake address
-            document.getElementById('referralLink').value = `https://bnbnest.com/ref=${fakeAddress}`;
-        });
+        async function connectWallet() {
+            try {
+                // Check if Web3 is injected by MetaMask
+                if (window.ethereum) {
+                    web3 = new Web3(window.ethereum);
+                    
+                    // Request account access
+                    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                    account = accounts[0];
+                    
+                    // Initialize contract
+                    contract = new web3.eth.Contract(CONTRACT_ABI, CONTRACT_ADDRESS);
+                    
+                    // Update UI
+                    connectWalletBtn.style.display = 'none';
+                    walletStatus.style.display = 'block';
+                    walletAddress.textContent = account;
+                    
+                    // Update referral link
+                    document.getElementById('referralLink').value = `https://bnbnest.com/ref=${account}`;
+                    
+                    // Load contract data
+                    await loadContractData();
+                    
+                    // Set up event listeners for account changes
+                    window.ethereum.on('accountsChanged', function (accounts) {
+                        if (accounts.length === 0) {
+                            // User disconnected their wallet
+                            location.reload();
+                        } else {
+                            account = accounts[0];
+                            walletAddress.textContent = account;
+                            document.getElementById('referralLink').value = `https://bnbnest.com/ref=${account}`;
+                            loadContractData();
+                        }
+                    });
+                    
+                } else {
+                    alert('Please install MetaMask to use this dApp!');
+                }
+            } catch (error) {
+                console.error('Error connecting wallet:', error);
+                alert('Error connecting wallet. Please try again.');
+            }
+        }
 
-        // Invest Button
+        connectWalletBtn.addEventListener('click', connectWallet);
+
+        // Load Contract Data
+        async function loadContractData() {
+            try {
+                // Load global stats
+                const totalTVL = await contract.methods.totalTVL().call();
+                const totalUsers = await contract.methods.totalUsers().call();
+                const currentROI = await contract.methods.getCurrentROI().call();
+                
+                document.getElementById('totalTVL').textContent = `$${(totalTVL / 1e18).toLocaleString()}`;
+                document.getElementById('totalUsers').textContent = totalUsers;
+                document.getElementById('currentROI').textContent = `${(currentROI / 100)}%`;
+                document.getElementById('currentTVL').textContent = `$${(totalTVL / 1e18).toLocaleString()}`;
+                
+                // Load user data if connected
+                if (account) {
+                    const userInfo = await contract.methods.getUserInfo(account).call();
+                    const pendingROI = await contract.methods.calculatePendingROI(account).call();
+                    
+                    document.getElementById('userDeposit').textContent = `${(userInfo.userDeposit / 1e18).toFixed(2)} USDT`;
+                    document.getElementById('pendingROI').textContent = `${(pendingROI / 1e18).toFixed(2)} USDT`;
+                    document.getElementById('claimedROI').textContent = `${(userInfo.userClaimedROI / 1e18).toFixed(2)} USDT`;
+                    document.getElementById('referralRewards').textContent = `${(userInfo.userReferralRewards / 1e18).toFixed(2)} USDT`;
+                    
+                    // Update countdown if user has active deposit
+                    if (userInfo.userDeposit > 0) {
+                        const depositTime = parseInt(userInfo.userDepositTime);
+                        const lockPeriod = 28 * 24 * 60 * 60; // 28 days in seconds
+                        const unlockTime = depositTime + lockPeriod;
+                        updateCountdown(unlockTime);
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading contract data:', error);
+            }
+        }
+
+        // Invest Function
         const investBtn = document.getElementById('investBtn');
         const successModal = document.getElementById('successModal');
         const goToDashboardBtn = document.getElementById('goToDashboard');
 
-        investBtn.addEventListener('click', () => {
+        investBtn.addEventListener('click', async () => {
             const depositAmount = document.getElementById('depositAmount').value;
+            const referrerAddress = document.getElementById('referrerAddress').value;
             
             if (!depositAmount || depositAmount < 10) {
                 alert('Please enter a valid deposit amount (minimum 10 USDT)');
                 return;
             }
             
-            // In a real implementation, this would interact with the smart contract
-            // For demonstration, we'll show the success modal
-            
-            successModal.classList.add('active');
+            try {
+                investBtn.disabled = true;
+                investBtn.innerHTML = '<div class="loading"></div> Processing...';
+                
+                const amount = web3.utils.toWei(depositAmount, 'ether');
+                const referrer = referrerAddress || '0x0000000000000000000000000000000000000000';
+                
+                // Execute deposit transaction
+                await contract.methods.deposit(amount, referrer).send({ from: account });
+                
+                // Show success modal
+                successModal.classList.add('active');
+                
+                // Reload data
+                await loadContractData();
+                
+            } catch (error) {
+                console.error('Error depositing:', error);
+                alert('Error processing deposit. Please try again.');
+            } finally {
+                investBtn.disabled = false;
+                investBtn.innerHTML = '<i class="fas fa-rocket"></i> Invest Now';
+            }
+        });
+
+        // Claim ROI
+        const claimROIBtn = document.getElementById('claimROI');
+
+        claimROIBtn.addEventListener('click', async () => {
+            try {
+                claimROIBtn.disabled = true;
+                claimROIBtn.innerHTML = '<div class="loading"></div> Claiming...';
+                
+                await contract.methods.claimROI().send({ from: account });
+                
+                alert('ROI claimed successfully!');
+                await loadContractData();
+                
+            } catch (error) {
+                console.error('Error claiming ROI:', error);
+                alert('Error claiming ROI. Please try again.');
+            } finally {
+                claimROIBtn.disabled = false;
+                claimROIBtn.innerHTML = '<i class="fas fa-coins"></i> Claim ROI';
+            }
+        });
+
+        // Claim Referral Rewards
+        const claimReferralBtn = document.getElementById('claimReferral');
+
+        claimReferralBtn.addEventListener('click', async () => {
+            try {
+                claimReferralBtn.disabled = true;
+                claimReferralBtn.innerHTML = '<div class="loading"></div> Claiming...';
+                
+                await contract.methods.claimReferralRewards().send({ from: account });
+                
+                alert('Referral rewards claimed successfully!');
+                await loadContractData();
+                
+            } catch (error) {
+                console.error('Error claiming referral rewards:', error);
+                alert('Error claiming referral rewards. Please try again.');
+            } finally {
+                claimReferralBtn.disabled = false;
+                claimReferralBtn.innerHTML = '<i class="fas fa-gift"></i> Claim Referral Rewards';
+            }
+        });
+
+        // Withdraw Capital
+        const withdrawCapitalBtn = document.getElementById('withdrawCapital');
+
+        withdrawCapitalBtn.addEventListener('click', async () => {
+            try {
+                withdrawCapitalBtn.disabled = true;
+                withdrawCapitalBtn.innerHTML = '<div class="loading"></div> Processing...';
+                
+                await contract.methods.withdrawCapital().send({ from: account });
+                
+                alert('Capital withdrawn successfully!');
+                await loadContractData();
+                
+            } catch (error) {
+                console.error('Error withdrawing capital:', error);
+                alert('Error withdrawing capital. Please try again.');
+            } finally {
+                withdrawCapitalBtn.disabled = false;
+                withdrawCapitalBtn.innerHTML = '<i class="fas fa-wallet"></i> Withdraw Capital';
+            }
         });
 
         goToDashboardBtn.addEventListener('click', () => {
             successModal.classList.remove('active');
-            // Scroll to dashboard section
             document.getElementById('dashboard').scrollIntoView({ behavior: 'smooth' });
         });
 
@@ -1392,32 +1673,29 @@
             }
         });
 
-        // Countdown Timer (for demonstration)
-        function updateCountdown() {
-            const countdownElement = document.getElementById('countdown');
-            // Set a future date (28 days from now)
-            const futureDate = new Date();
-            futureDate.setDate(futureDate.getDate() + 28);
-            
-            const now = new Date().getTime();
-            const distance = futureDate - now;
-            
-            if (distance < 0) {
-                countdownElement.textContent = "Lock period ended!";
-                return;
+        // Countdown Timer
+        function updateCountdown(unlockTime) {
+            function update() {
+                const now = Math.floor(Date.now() / 1000);
+                const distance = unlockTime - now;
+                
+                if (distance < 0) {
+                    document.getElementById('countdown').textContent = "Unlocked!";
+                    return;
+                }
+                
+                const days = Math.floor(distance / (60 * 60 * 24));
+                const hours = Math.floor((distance % (60 * 60 * 24)) / (60 * 60));
+                const minutes = Math.floor((distance % (60 * 60)) / 60);
+                const seconds = Math.floor(distance % 60);
+                
+                document.getElementById('countdown').textContent = 
+                    `${days} days ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
             }
             
-            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-            
-            countdownElement.textContent = `${days} days ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            update();
+            setInterval(update, 1000);
         }
-
-        // Update countdown every second
-        setInterval(updateCountdown, 1000);
-        updateCountdown(); // Initial call
 
         // Smooth scrolling for anchor links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -1434,6 +1712,25 @@
                     });
                 }
             });
+        });
+
+        // Auto-connect if already authorized
+        window.addEventListener('load', async () => {
+            if (window.ethereum) {
+                const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+                if (accounts.length > 0) {
+                    account = accounts[0];
+                    web3 = new Web3(window.ethereum);
+                    contract = new web3.eth.Contract(CONTRACT_ABI, CONTRACT_ADDRESS);
+                    
+                    connectWalletBtn.style.display = 'none';
+                    walletStatus.style.display = 'block';
+                    walletAddress.textContent = account;
+                    document.getElementById('referralLink').value = `https://bnbnest.com/ref=${account}`;
+                    
+                    await loadContractData();
+                }
+            }
         });
     </script>
 </body>
