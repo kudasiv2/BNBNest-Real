@@ -6,7 +6,7 @@
     <title>BNBNest - Smart Investment Platform</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.7.4/dist/web3.min.js"></script>
     <style>
         :root {
             --pink: #ff2d75;
@@ -1550,6 +1550,9 @@
                 if (window.ethereum) {
                     web3 = new Web3(window.ethereum);
                     
+                    // Check network
+                    await checkNetwork();
+                    
                     // Request account access
                     const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
                     account = accounts[0];
@@ -1560,7 +1563,7 @@
                     // Get USDT contract address from BNBNest contract
                     const usdtAddress = await contract.methods.usdt().call();
                     
-                    // Initialize USDT contract (standard BEP20 ABI)
+                    // Initialize USDT contract
                     const usdtAbi = [
                         {
                             "constant": false,
@@ -1619,6 +1622,11 @@
                         }
                     });
                     
+                    // Network change handler
+                    window.ethereum.on('chainChanged', function (chainId) {
+                        location.reload();
+                    });
+                    
                     // Close connect modal if open
                     connectModal.classList.remove('active');
                     
@@ -1627,7 +1635,41 @@
                 }
             } catch (error) {
                 console.error('Error connecting wallet:', error);
-                showError('Error connecting wallet. Please try again.');
+                showError('Error connecting wallet: ' + (error.message || 'Please check your MetaMask and try again.'));
+            }
+        }
+
+        // Network Check
+        async function checkNetwork() {
+            if (window.ethereum) {
+                const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+                // BSC Mainnet: 0x38, BSC Testnet: 0x61
+                if (chainId !== '0x38' && chainId !== '0x61') {
+                    try {
+                        await window.ethereum.request({
+                            method: 'wallet_switchEthereumChain',
+                            params: [{ chainId: '0x38' }], // BSC Mainnet
+                        });
+                    } catch (error) {
+                        if (error.code === 4902) {
+                            // Chain not added, try to add it
+                            await window.ethereum.request({
+                                method: 'wallet_addEthereumChain',
+                                params: [{
+                                    chainId: '0x38',
+                                    chainName: 'Binance Smart Chain',
+                                    nativeCurrency: {
+                                        name: 'BNB',
+                                        symbol: 'BNB',
+                                        decimals: 18
+                                    },
+                                    rpcUrls: ['https://bsc-dataseed.binance.org/'],
+                                    blockExplorerUrls: ['https://bscscan.com/']
+                                }]
+                            });
+                        }
+                    }
+                }
             }
         }
 
@@ -1657,20 +1699,33 @@
                 const totalUsers = await contract.methods.totalUsers().call();
                 const currentROI = await contract.methods.getCurrentROI().call();
                 
-                document.getElementById('totalTVL').textContent = `$${(totalTVL / 1e18).toLocaleString()}`;
+                // Format numbers properly
+                const formattedTVL = parseFloat(web3.utils.fromWei(totalTVL, 'ether')).toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                });
+                const roiPercentage = (currentROI / 100).toFixed(2);
+                
+                document.getElementById('totalTVL').textContent = `$${formattedTVL}`;
                 document.getElementById('totalUsers').textContent = totalUsers;
-                document.getElementById('currentROI').textContent = `${(currentROI / 100)}%`;
-                document.getElementById('currentTVL').textContent = `$${(totalTVL / 1e18).toLocaleString()}`;
+                document.getElementById('currentROI').textContent = `${roiPercentage}%`;
+                document.getElementById('currentTVL').textContent = `$${formattedTVL}`;
                 
                 // Load user data if connected
                 if (account) {
                     const userInfo = await contract.methods.getUserInfo(account).call();
                     const pendingROI = await contract.methods.calculatePendingROI(account).call();
                     
-                    document.getElementById('userDeposit').textContent = `${(userInfo.userDeposit / 1e18).toFixed(2)} USDT`;
-                    document.getElementById('pendingROI').textContent = `${(pendingROI / 1e18).toFixed(2)} USDT`;
-                    document.getElementById('claimedROI').textContent = `${(userInfo.userClaimedROI / 1e18).toFixed(2)} USDT`;
-                    document.getElementById('referralRewards').textContent = `${(userInfo.userReferralRewards / 1e18).toFixed(2)} USDT`;
+                    // Format user data
+                    const userDeposit = web3.utils.fromWei(userInfo.userDeposit, 'ether');
+                    const pendingROIFormatted = web3.utils.fromWei(pendingROI, 'ether');
+                    const claimedROIFormatted = web3.utils.fromWei(userInfo.userClaimedROI, 'ether');
+                    const referralRewardsFormatted = web3.utils.fromWei(userInfo.userReferralRewards, 'ether');
+                    
+                    document.getElementById('userDeposit').textContent = `${parseFloat(userDeposit).toFixed(2)} USDT`;
+                    document.getElementById('pendingROI').textContent = `${parseFloat(pendingROIFormatted).toFixed(2)} USDT`;
+                    document.getElementById('claimedROI').textContent = `${parseFloat(claimedROIFormatted).toFixed(2)} USDT`;
+                    document.getElementById('referralRewards').textContent = `${parseFloat(referralRewardsFormatted).toFixed(2)} USDT`;
                     
                     // Update countdown if user has active deposit
                     if (userInfo.userDeposit > 0) {
@@ -1678,6 +1733,8 @@
                         const lockPeriod = 28 * 24 * 60 * 60; // 28 days in seconds
                         const unlockTime = depositTime + lockPeriod;
                         updateCountdown(unlockTime);
+                    } else {
+                        document.getElementById('countdown').textContent = "No active deposit";
                     }
                 }
             } catch (error) {
@@ -1708,21 +1765,45 @@
                 investBtn.disabled = true;
                 investBtn.innerHTML = '<div class="loading"></div> Processing...';
                 
-                const amount = web3.utils.toWei(depositAmount, 'ether');
+                // Convert amount to wei (USDT has 18 decimals)
+                const amount = web3.utils.toWei(depositAmount.toString(), 'ether');
                 const referrer = referrerAddress && web3.utils.isAddress(referrerAddress) ? referrerAddress : '0x0000000000000000000000000000000000000000';
+                
+                console.log('Deposit amount in wei:', amount);
                 
                 // Check USDT allowance first
                 const allowance = await usdtContract.methods.allowance(account, CONTRACT_ADDRESS).call();
-                const allowanceAmount = web3.utils.toBN(allowance);
+                console.log('Current allowance:', allowance);
+                
+                // Convert to BigNumber
+                const allowanceBN = web3.utils.toBN(allowance);
                 const depositAmountBN = web3.utils.toBN(amount);
                 
-                if (allowanceAmount.lt(depositAmountBN)) {
-                    // Need to approve first
-                    await usdtContract.methods.approve(CONTRACT_ADDRESS, amount).send({ from: account });
+                if (allowanceBN.lt(depositAmountBN)) {
+                    // Need to approve first - approve amount yang cukup besar
+                    const approveAmount = web3.utils.toBN('1000000000000000000000000'); // Approve 1,000,000 USDT
+                    console.log('Approving amount:', approveAmount.toString());
+                    
+                    investBtn.innerHTML = '<div class="loading"></div> Approving USDT...';
+                    
+                    const approveTx = await usdtContract.methods.approve(CONTRACT_ADDRESS, approveAmount.toString()).send({ 
+                        from: account,
+                        gas: 100000 
+                    });
+                    console.log('Approve transaction:', approveTx);
+                    
+                    // Tunggu sebentar untuk memastikan approval diproses
+                    await new Promise(resolve => setTimeout(resolve, 2000));
                 }
                 
                 // Execute deposit transaction
-                await contract.methods.deposit(amount, referrer).send({ from: account });
+                investBtn.innerHTML = '<div class="loading"></div> Depositing...';
+                
+                const depositTx = await contract.methods.deposit(amount, referrer).send({ 
+                    from: account,
+                    gas: 300000 
+                });
+                console.log('Deposit transaction:', depositTx);
                 
                 // Show success modal
                 successModal.classList.add('active');
@@ -1732,7 +1813,21 @@
                 
             } catch (error) {
                 console.error('Error depositing:', error);
-                showError(error.message || 'Error processing deposit. Please try again.');
+                
+                // Error handling yang lebih detail
+                let errorMsg = 'Error processing deposit. ';
+                
+                if (error.code === 4001) {
+                    errorMsg += 'Transaction was rejected by user.';
+                } else if (error.message && error.message.includes('insufficient funds')) {
+                    errorMsg += 'Insufficient BNB for gas fees.';
+                } else if (error.message && error.message.includes('revert')) {
+                    errorMsg += 'Transaction reverted. Please check deposit amount and try again.';
+                } else {
+                    errorMsg += error.message || 'Please try again.';
+                }
+                
+                showError(errorMsg);
             } finally {
                 investBtn.disabled = false;
                 investBtn.innerHTML = '<i class="fas fa-rocket"></i> Invest Now';
@@ -1752,7 +1847,10 @@
                 claimROIBtn.disabled = true;
                 claimROIBtn.innerHTML = '<div class="loading"></div> Claiming...';
                 
-                await contract.methods.claimROI().send({ from: account });
+                await contract.methods.claimROI().send({ 
+                    from: account,
+                    gas: 200000 
+                });
                 
                 alert('ROI claimed successfully!');
                 await loadContractData();
@@ -1779,7 +1877,10 @@
                 claimReferralBtn.disabled = true;
                 claimReferralBtn.innerHTML = '<div class="loading"></div> Claiming...';
                 
-                await contract.methods.claimReferralRewards().send({ from: account });
+                await contract.methods.claimReferralRewards().send({ 
+                    from: account,
+                    gas: 200000 
+                });
                 
                 alert('Referral rewards claimed successfully!');
                 await loadContractData();
@@ -1806,7 +1907,10 @@
                 withdrawCapitalBtn.disabled = true;
                 withdrawCapitalBtn.innerHTML = '<div class="loading"></div> Processing...';
                 
-                await contract.methods.withdrawCapital().send({ from: account });
+                await contract.methods.withdrawCapital().send({ 
+                    from: account,
+                    gas: 200000 
+                });
                 
                 alert('Capital withdrawn successfully!');
                 await loadContractData();
@@ -1898,52 +2002,56 @@
         // Auto-connect if already authorized
         window.addEventListener('load', async () => {
             if (window.ethereum) {
-                const accounts = await window.ethereum.request({ method: 'eth_accounts' });
-                if (accounts.length > 0) {
-                    account = accounts[0];
-                    web3 = new Web3(window.ethereum);
-                    contract = new web3.eth.Contract(CONTRACT_ABI, CONTRACT_ADDRESS);
-                    
-                    // Get USDT contract
-                    const usdtAddress = await contract.methods.usdt().call();
-                    const usdtAbi = [
-                        {
-                            "constant": false,
-                            "inputs": [
-                                {"name": "_spender", "type": "address"},
-                                {"name": "_value", "type": "uint256"}
-                            ],
-                            "name": "approve",
-                            "outputs": [{"name": "", "type": "bool"}],
-                            "type": "function"
-                        },
-                        {
-                            "constant": true,
-                            "inputs": [{"name": "_owner", "type": "address"}],
-                            "name": "balanceOf",
-                            "outputs": [{"name": "balance", "type": "uint256"}],
-                            "type": "function"
-                        },
-                        {
-                            "constant": true,
-                            "inputs": [
-                                {"name": "_owner", "type": "address"},
-                                {"name": "_spender", "type": "address"}
-                            ],
-                            "name": "allowance",
-                            "outputs": [{"name": "", "type": "uint256"}],
-                            "type": "function"
-                        }
-                    ];
-                    usdtContract = new web3.eth.Contract(usdtAbi, usdtAddress);
-                    
-                    connectWalletBtn.style.display = 'none';
-                    walletStatus.style.display = 'block';
-                    walletAddress.textContent = account;
-                    updateReferralLink();
-                    checkReferralFromURL();
-                    
-                    await loadContractData();
+                try {
+                    const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+                    if (accounts.length > 0) {
+                        account = accounts[0];
+                        web3 = new Web3(window.ethereum);
+                        contract = new web3.eth.Contract(CONTRACT_ABI, CONTRACT_ADDRESS);
+                        
+                        // Get USDT contract
+                        const usdtAddress = await contract.methods.usdt().call();
+                        const usdtAbi = [
+                            {
+                                "constant": false,
+                                "inputs": [
+                                    {"name": "_spender", "type": "address"},
+                                    {"name": "_value", "type": "uint256"}
+                                ],
+                                "name": "approve",
+                                "outputs": [{"name": "", "type": "bool"}],
+                                "type": "function"
+                            },
+                            {
+                                "constant": true,
+                                "inputs": [{"name": "_owner", "type": "address"}],
+                                "name": "balanceOf",
+                                "outputs": [{"name": "balance", "type": "uint256"}],
+                                "type": "function"
+                            },
+                            {
+                                "constant": true,
+                                "inputs": [
+                                    {"name": "_owner", "type": "address"},
+                                    {"name": "_spender", "type": "address"}
+                                ],
+                                "name": "allowance",
+                                "outputs": [{"name": "", "type": "uint256"}],
+                                "type": "function"
+                            }
+                        ];
+                        usdtContract = new web3.eth.Contract(usdtAbi, usdtAddress);
+                        
+                        connectWalletBtn.style.display = 'none';
+                        walletStatus.style.display = 'block';
+                        walletAddress.textContent = account;
+                        updateReferralLink();
+                        checkReferralFromURL();
+                        
+                        await loadContractData();
+                    }
+                } catch (error) {
+                    console.error('Error in auto-connect:', error);
                 }
             }
         });
@@ -1954,18 +2062,11 @@
         ];
 
         actionButtons.forEach(button => {
-            const originalClick = button.onclick;
-            button.onclick = null; // Remove existing handler
-            
             button.addEventListener('click', function(e) {
                 if (!account) {
                     e.preventDefault();
                     showConnectModal();
                     return false;
-                }
-                
-                if (originalClick) {
-                    return originalClick.call(this, e);
                 }
             });
         });
