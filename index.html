@@ -249,6 +249,19 @@
             background: rgba(255, 45, 117, 0.1);
         }
 
+        .btn-disabled {
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.5);
+            cursor: not-allowed;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-disabled:hover {
+            transform: none;
+            box-shadow: none;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
         .btn-center {
             display: flex;
             justify-content: center;
@@ -512,6 +525,7 @@
             border-radius: 10px 0 0 10px;
             color: white;
             font-size: 16px;
+            text-align: center;
         }
 
         .referral-link button {
@@ -539,6 +553,10 @@
             grid-template-columns: repeat(4, 1fr);
             gap: 15px;
             margin-bottom: 30px;
+        }
+
+        .referral-levels .level-box:nth-child(7) {
+            grid-column: 2 / 3;
         }
 
         .level-box {
@@ -921,6 +939,7 @@
             
             .referral-link input {
                 border-radius: 10px 10px 0 0;
+                text-align: center;
             }
             
             .referral-link button {
@@ -930,6 +949,10 @@
             
             .referral-levels {
                 grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .referral-levels .level-box:nth-child(7) {
+                grid-column: auto;
             }
         }
     </style>
@@ -1063,7 +1086,7 @@
                 <div class="dashboard-info">
                     <div class="info-box expiry">
                         <div class="expiry-label">Expires In</div>
-                        <div class="expiry-value" id="countdown">28 days 00:00:00</div>
+                        <div class="expiry-value" id="countdown">No active deposit</div>
                     </div>
                     <div class="info-box">
                         <div class="info-label">Active Deposit</div>
@@ -1082,7 +1105,7 @@
                     <button class="btn" id="claimROI">
                         <i class="fas fa-coins"></i> Claim ROI
                     </button>
-                    <button class="btn btn-secondary" id="withdrawCapital">
+                    <button class="btn btn-disabled" id="withdrawCapital" disabled>
                         <i class="fas fa-wallet"></i> Withdraw Capital
                     </button>
                 </div>
@@ -1704,17 +1727,30 @@
                     minimumFractionDigits: 2,
                     maximumFractionDigits: 2
                 });
-                const roiPercentage = (currentROI / 100).toFixed(2);
+                
+                // Calculate ROI based on TVL (0.5% to 2.5% range)
+                const tvlInUSD = parseFloat(web3.utils.fromWei(totalTVL, 'ether'));
+                let calculatedROI = 0.5; // Base ROI
+                
+                if (tvlInUSD >= 1000000) {
+                    calculatedROI = 2.5; // Max ROI at $1M TVL
+                } else if (tvlInUSD > 0) {
+                    // Linear scaling from 0.5% to 2.5% based on TVL
+                    calculatedROI = 0.5 + (tvlInUSD / 1000000) * 2;
+                    calculatedROI = Math.min(calculatedROI, 2.5); // Cap at 2.5%
+                }
                 
                 document.getElementById('totalTVL').textContent = `$${formattedTVL}`;
                 document.getElementById('totalUsers').textContent = totalUsers;
-                document.getElementById('currentROI').textContent = `${roiPercentage}%`;
+                document.getElementById('currentROI').textContent = `${calculatedROI.toFixed(2)}%`;
                 document.getElementById('currentTVL').textContent = `$${formattedTVL}`;
+                document.getElementById('estimatedROI').textContent = `${calculatedROI.toFixed(2)}%`;
                 
                 // Load user data if connected
                 if (account) {
                     const userInfo = await contract.methods.getUserInfo(account).call();
                     const pendingROI = await contract.methods.calculatePendingROI(account).call();
+                    const canWithdraw = await contract.methods.canWithdrawCapital(account).call();
                     
                     // Format user data
                     const userDeposit = web3.utils.fromWei(userInfo.userDeposit, 'ether');
@@ -1726,6 +1762,18 @@
                     document.getElementById('pendingROI').textContent = `${parseFloat(pendingROIFormatted).toFixed(2)} USDT`;
                     document.getElementById('claimedROI').textContent = `${parseFloat(claimedROIFormatted).toFixed(2)} USDT`;
                     document.getElementById('referralRewards').textContent = `${parseFloat(referralRewardsFormatted).toFixed(2)} USDT`;
+                    
+                    // Update withdraw capital button based on lock period
+                    const withdrawCapitalBtn = document.getElementById('withdrawCapital');
+                    if (canWithdraw) {
+                        withdrawCapitalBtn.disabled = false;
+                        withdrawCapitalBtn.classList.remove('btn-disabled');
+                        withdrawCapitalBtn.classList.add('btn-secondary');
+                    } else {
+                        withdrawCapitalBtn.disabled = true;
+                        withdrawCapitalBtn.classList.add('btn-disabled');
+                        withdrawCapitalBtn.classList.remove('btn-secondary');
+                    }
                     
                     // Update countdown if user has active deposit
                     if (userInfo.userDeposit > 0) {
@@ -1966,6 +2014,11 @@
                 
                 if (distance < 0) {
                     document.getElementById('countdown').textContent = "Unlocked!";
+                    // Enable withdraw button when unlocked
+                    const withdrawCapitalBtn = document.getElementById('withdrawCapital');
+                    withdrawCapitalBtn.disabled = false;
+                    withdrawCapitalBtn.classList.remove('btn-disabled');
+                    withdrawCapitalBtn.classList.add('btn-secondary');
                     return;
                 }
                 
