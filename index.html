@@ -217,7 +217,9 @@
         }
 
         .btn {
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
             padding: 12px 30px;
             background: var(--gradient);
             color: white;
@@ -229,6 +231,7 @@
             text-decoration: none;
             transition: all 0.3s ease;
             box-shadow: var(--glow);
+            gap: 8px;
         }
 
         .btn:hover {
@@ -246,10 +249,10 @@
             background: rgba(255, 45, 117, 0.1);
         }
 
-        .btn-icon {
+        .btn-center {
             display: flex;
-            align-items: center;
-            gap: 8px;
+            justify-content: center;
+            width: 100%;
         }
 
         .wallet-status {
@@ -519,6 +522,9 @@
             border-radius: 0 10px 10px 0;
             cursor: pointer;
             font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .referral-stats {
@@ -530,7 +536,7 @@
 
         .referral-levels {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            grid-template-columns: repeat(4, 1fr);
             gap: 15px;
             margin-bottom: 30px;
         }
@@ -577,6 +583,9 @@
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
 
         .tier-card.locked {
@@ -625,6 +634,11 @@
             color: var(--pink);
             position: absolute;
             left: 0;
+        }
+
+        .tier-actions {
+            display: flex;
+            justify-content: center;
         }
 
         /* How to Join Section */
@@ -728,6 +742,12 @@
             color: var(--pink);
         }
 
+        .security-actions {
+            display: flex;
+            justify-content: center;
+            margin-top: 40px;
+        }
+
         /* Footer */
         footer {
             background: var(--navy);
@@ -793,14 +813,6 @@
             font-size: 14px;
         }
 
-        .contract-address {
-            margin-top: 10px;
-            font-family: 'Courier New', monospace;
-            font-size: 14px;
-            color: var(--light-purple);
-            word-break: break-all;
-        }
-
         /* Modal */
         .modal {
             position: fixed;
@@ -856,6 +868,19 @@
             color: var(--light-purple);
         }
 
+        .error-message {
+            background: rgba(255, 0, 0, 0.1);
+            border: 1px solid rgba(255, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+            text-align: left;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
         /* Loading */
         .loading {
             display: inline-block;
@@ -904,7 +929,7 @@
             }
             
             .referral-levels {
-                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+                grid-template-columns: repeat(2, 1fr);
             }
         }
     </style>
@@ -1054,10 +1079,10 @@
                     </div>
                 </div>
                 <div class="dashboard-actions">
-                    <button class="btn btn-icon" id="claimROI">
+                    <button class="btn" id="claimROI">
                         <i class="fas fa-coins"></i> Claim ROI
                     </button>
-                    <button class="btn btn-secondary btn-icon" id="withdrawCapital">
+                    <button class="btn btn-secondary" id="withdrawCapital">
                         <i class="fas fa-wallet"></i> Withdraw Capital
                     </button>
                 </div>
@@ -1079,15 +1104,17 @@
                 </div>
                 <div class="input-group">
                     <label for="referrerAddress">Referrer Address (Optional)</label>
-                    <input type="text" id="referrerAddress" placeholder="Enter referrer wallet address">
+                    <input type="text" id="referrerAddress" placeholder="Will be auto-filled if coming from referral">
                 </div>
                 <div class="roi-info">
                     <p>Estimated Daily ROI: <span id="estimatedROI">0.5% - 2.5%</span></p>
                     <p>Based on current TVL: <span id="currentTVL">$0</span></p>
                 </div>
-                <button class="btn btn-icon" id="investBtn" style="width: 100%;">
-                    <i class="fas fa-rocket"></i> Invest Now
-                </button>
+                <div class="btn-center">
+                    <button class="btn" id="investBtn">
+                        <i class="fas fa-rocket"></i> Invest Now
+                    </button>
+                </div>
             </div>
         </div>
     </section>
@@ -1101,7 +1128,7 @@
             </div>
             <div class="referral-container">
                 <div class="referral-link">
-                    <input type="text" id="referralLink" value="https://bnbnest.com/ref=0x0000000000000000000000000000000000000000" readonly>
+                    <input type="text" id="referralLink" value="Connect your wallet to get referral link" readonly>
                     <button id="copyLink">
                         <i class="fas fa-copy"></i> Copy
                     </button>
@@ -1148,9 +1175,11 @@
                         <div class="info-value" id="totalReferrals">0</div>
                     </div>
                 </div>
-                <button class="btn btn-icon" id="claimReferral" style="width: 100%;">
-                    <i class="fas fa-gift"></i> Claim Referral Rewards
-                </button>
+                <div class="btn-center">
+                    <button class="btn" id="claimReferral">
+                        <i class="fas fa-gift"></i> Claim Referral Rewards
+                    </button>
+                </div>
             </div>
         </div>
     </section>
@@ -1170,9 +1199,11 @@
                         <li>50 USDT deposit</li>
                         <li>10 direct referrals</li>
                     </ul>
-                    <button class="btn btn-secondary btn-icon" disabled>
-                        <i class="fas fa-lock"></i> Claim Salary
-                    </button>
+                    <div class="tier-actions">
+                        <button class="btn btn-secondary" disabled>
+                            <i class="fas fa-lock"></i> Claim Salary
+                        </button>
+                    </div>
                 </div>
                 <div class="tier-card locked">
                     <div class="tier-name">Visionary</div>
@@ -1181,9 +1212,11 @@
                         <li>100 USDT deposit</li>
                         <li>15 direct + 15 level 2 referrals</li>
                     </ul>
-                    <button class="btn btn-secondary btn-icon" disabled>
-                        <i class="fas fa-lock"></i> Claim Salary
-                    </button>
+                    <div class="tier-actions">
+                        <button class="btn btn-secondary" disabled>
+                            <i class="fas fa-lock"></i> Claim Salary
+                        </button>
+                    </div>
                 </div>
                 <div class="tier-card locked">
                     <div class="tier-name">Architect</div>
@@ -1192,9 +1225,11 @@
                         <li>130 USDT deposit</li>
                         <li>20 referrals at levels 1-3</li>
                     </ul>
-                    <button class="btn btn-secondary btn-icon" disabled>
-                        <i class="fas fa-lock"></i> Claim Salary
-                    </button>
+                    <div class="tier-actions">
+                        <button class="btn btn-secondary" disabled>
+                            <i class="fas fa-lock"></i> Claim Salary
+                        </button>
+                    </div>
                 </div>
                 <div class="tier-card locked">
                     <div class="tier-name">Maverick</div>
@@ -1203,9 +1238,11 @@
                         <li>150 USDT deposit</li>
                         <li>30 referrals at levels 1-4</li>
                     </ul>
-                    <button class="btn btn-secondary btn-icon" disabled>
-                        <i class="fas fa-lock"></i> Claim Salary
-                    </button>
+                    <div class="tier-actions">
+                        <button class="btn btn-secondary" disabled>
+                            <i class="fas fa-lock"></i> Claim Salary
+                        </button>
+                    </div>
                 </div>
                 <div class="tier-card locked">
                     <div class="tier-name">Legendary</div>
@@ -1214,9 +1251,11 @@
                         <li>230 USDT deposit</li>
                         <li>40 referrals at levels 1-5</li>
                     </ul>
-                    <button class="btn btn-secondary btn-icon" disabled>
-                        <i class="fas fa-lock"></i> Claim Salary
-                    </button>
+                    <div class="tier-actions">
+                        <button class="btn btn-secondary" disabled>
+                            <i class="fas fa-lock"></i> Claim Salary
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1348,8 +1387,8 @@
                     <p>28-day lock period ensures stability and prevents premature withdrawals</p>
                 </div>
             </div>
-            <div style="text-align: center; margin-top: 40px;">
-                <a href="https://bscscan.com/address/0x36622c46ba53bbfaeba618ed035bbb6cd67017b0#code" target="_blank" class="btn btn-icon">
+            <div class="security-actions">
+                <a href="https://bscscan.com/address/0x36622c46ba53bbfaeba618ed035bbb6cd67017b0#code" target="_blank" class="btn">
                     <i class="fas fa-external-link-alt"></i> View on BSCScan
                 </a>
             </div>
@@ -1381,9 +1420,6 @@
             <div class="copyright">
                 © 2025 BNBNest
             </div>
-            <div class="contract-address">
-                Contract Address: 0x36622C46Ba53BBfaeBa618ED035BBB6CD67017B0
-            </div>
         </div>
     </footer>
 
@@ -1395,8 +1431,37 @@
             </div>
             <h3>Investment Successful!</h3>
             <p>Your investment has been processed successfully. You can now start earning daily ROI.</p>
-            <button class="btn btn-icon" id="goToDashboard">
+            <button class="btn" id="goToDashboard">
                 <i class="fas fa-tachometer-alt"></i> Go to Your Dashboard
+            </button>
+        </div>
+    </div>
+
+    <!-- Error Modal -->
+    <div class="modal" id="errorModal">
+        <div class="modal-content">
+            <div class="modal-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <h3>Oops! Something went wrong.</h3>
+            <p>Error message:</p>
+            <div class="error-message" id="errorMessage"></div>
+            <button class="btn" id="closeError">
+                <i class="fas fa-times"></i> Close
+            </button>
+        </div>
+    </div>
+
+    <!-- Connect Wallet Modal -->
+    <div class="modal" id="connectModal">
+        <div class="modal-content">
+            <div class="modal-icon">
+                <i class="fas fa-wallet"></i>
+            </div>
+            <h3>Connect Your Wallet</h3>
+            <p>Please connect your wallet to use this feature. Make sure you have MetaMask or another Web3 wallet installed.</p>
+            <button class="btn" id="connectFromModal">
+                <i class="fas fa-plug"></i> Connect Wallet
             </button>
         </div>
     </div>
@@ -1410,6 +1475,7 @@
         let web3;
         let contract;
         let account;
+        let usdtContract;
 
         // Mobile Menu Toggle
         const hamburger = document.getElementById('hamburger');
@@ -1456,6 +1522,11 @@
         const referralLink = document.getElementById('referralLink');
 
         copyLinkBtn.addEventListener('click', () => {
+            if (!account) {
+                showConnectModal();
+                return;
+            }
+            
             referralLink.select();
             document.execCommand('copy');
             
@@ -1471,6 +1542,7 @@
         const connectWalletBtn = document.getElementById('connectWallet');
         const walletStatus = document.getElementById('walletStatus');
         const walletAddress = document.getElementById('walletAddress');
+        const connectFromModal = document.getElementById('connectFromModal');
 
         async function connectWallet() {
             try {
@@ -1485,13 +1557,51 @@
                     // Initialize contract
                     contract = new web3.eth.Contract(CONTRACT_ABI, CONTRACT_ADDRESS);
                     
+                    // Get USDT contract address from BNBNest contract
+                    const usdtAddress = await contract.methods.usdt().call();
+                    
+                    // Initialize USDT contract (standard BEP20 ABI)
+                    const usdtAbi = [
+                        {
+                            "constant": false,
+                            "inputs": [
+                                {"name": "_spender", "type": "address"},
+                                {"name": "_value", "type": "uint256"}
+                            ],
+                            "name": "approve",
+                            "outputs": [{"name": "", "type": "bool"}],
+                            "type": "function"
+                        },
+                        {
+                            "constant": true,
+                            "inputs": [{"name": "_owner", "type": "address"}],
+                            "name": "balanceOf",
+                            "outputs": [{"name": "balance", "type": "uint256"}],
+                            "type": "function"
+                        },
+                        {
+                            "constant": true,
+                            "inputs": [
+                                {"name": "_owner", "type": "address"},
+                                {"name": "_spender", "type": "address"}
+                            ],
+                            "name": "allowance",
+                            "outputs": [{"name": "", "type": "uint256"}],
+                            "type": "function"
+                        }
+                    ];
+                    usdtContract = new web3.eth.Contract(usdtAbi, usdtAddress);
+                    
                     // Update UI
                     connectWalletBtn.style.display = 'none';
                     walletStatus.style.display = 'block';
                     walletAddress.textContent = account;
                     
                     // Update referral link
-                    document.getElementById('referralLink').value = `https://bnbnest.com/ref=${account}`;
+                    updateReferralLink();
+                    
+                    // Check URL for referral parameter
+                    checkReferralFromURL();
                     
                     // Load contract data
                     await loadContractData();
@@ -1504,21 +1614,40 @@
                         } else {
                             account = accounts[0];
                             walletAddress.textContent = account;
-                            document.getElementById('referralLink').value = `https://bnbnest.com/ref=${account}`;
+                            updateReferralLink();
                             loadContractData();
                         }
                     });
+                    
+                    // Close connect modal if open
+                    connectModal.classList.remove('active');
                     
                 } else {
                     alert('Please install MetaMask to use this dApp!');
                 }
             } catch (error) {
                 console.error('Error connecting wallet:', error);
-                alert('Error connecting wallet. Please try again.');
+                showError('Error connecting wallet. Please try again.');
+            }
+        }
+
+        function updateReferralLink() {
+            if (account) {
+                const currentUrl = window.location.href.split('?')[0];
+                document.getElementById('referralLink').value = `${currentUrl}?ref=${account}`;
+            }
+        }
+
+        function checkReferralFromURL() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const refAddress = urlParams.get('ref');
+            if (refAddress && web3.utils.isAddress(refAddress)) {
+                document.getElementById('referrerAddress').value = refAddress;
             }
         }
 
         connectWalletBtn.addEventListener('click', connectWallet);
+        connectFromModal.addEventListener('click', connectWallet);
 
         // Load Contract Data
         async function loadContractData() {
@@ -1562,6 +1691,11 @@
         const goToDashboardBtn = document.getElementById('goToDashboard');
 
         investBtn.addEventListener('click', async () => {
+            if (!account) {
+                showConnectModal();
+                return;
+            }
+            
             const depositAmount = document.getElementById('depositAmount').value;
             const referrerAddress = document.getElementById('referrerAddress').value;
             
@@ -1575,7 +1709,17 @@
                 investBtn.innerHTML = '<div class="loading"></div> Processing...';
                 
                 const amount = web3.utils.toWei(depositAmount, 'ether');
-                const referrer = referrerAddress || '0x0000000000000000000000000000000000000000';
+                const referrer = referrerAddress && web3.utils.isAddress(referrerAddress) ? referrerAddress : '0x0000000000000000000000000000000000000000';
+                
+                // Check USDT allowance first
+                const allowance = await usdtContract.methods.allowance(account, CONTRACT_ADDRESS).call();
+                const allowanceAmount = web3.utils.toBN(allowance);
+                const depositAmountBN = web3.utils.toBN(amount);
+                
+                if (allowanceAmount.lt(depositAmountBN)) {
+                    // Need to approve first
+                    await usdtContract.methods.approve(CONTRACT_ADDRESS, amount).send({ from: account });
+                }
                 
                 // Execute deposit transaction
                 await contract.methods.deposit(amount, referrer).send({ from: account });
@@ -1588,7 +1732,7 @@
                 
             } catch (error) {
                 console.error('Error depositing:', error);
-                alert('Error processing deposit. Please try again.');
+                showError(error.message || 'Error processing deposit. Please try again.');
             } finally {
                 investBtn.disabled = false;
                 investBtn.innerHTML = '<i class="fas fa-rocket"></i> Invest Now';
@@ -1599,6 +1743,11 @@
         const claimROIBtn = document.getElementById('claimROI');
 
         claimROIBtn.addEventListener('click', async () => {
+            if (!account) {
+                showConnectModal();
+                return;
+            }
+            
             try {
                 claimROIBtn.disabled = true;
                 claimROIBtn.innerHTML = '<div class="loading"></div> Claiming...';
@@ -1610,7 +1759,7 @@
                 
             } catch (error) {
                 console.error('Error claiming ROI:', error);
-                alert('Error claiming ROI. Please try again.');
+                showError(error.message || 'Error claiming ROI. Please try again.');
             } finally {
                 claimROIBtn.disabled = false;
                 claimROIBtn.innerHTML = '<i class="fas fa-coins"></i> Claim ROI';
@@ -1621,6 +1770,11 @@
         const claimReferralBtn = document.getElementById('claimReferral');
 
         claimReferralBtn.addEventListener('click', async () => {
+            if (!account) {
+                showConnectModal();
+                return;
+            }
+            
             try {
                 claimReferralBtn.disabled = true;
                 claimReferralBtn.innerHTML = '<div class="loading"></div> Claiming...';
@@ -1632,7 +1786,7 @@
                 
             } catch (error) {
                 console.error('Error claiming referral rewards:', error);
-                alert('Error claiming referral rewards. Please try again.');
+                showError(error.message || 'Error claiming referral rewards. Please try again.');
             } finally {
                 claimReferralBtn.disabled = false;
                 claimReferralBtn.innerHTML = '<i class="fas fa-gift"></i> Claim Referral Rewards';
@@ -1643,6 +1797,11 @@
         const withdrawCapitalBtn = document.getElementById('withdrawCapital');
 
         withdrawCapitalBtn.addEventListener('click', async () => {
+            if (!account) {
+                showConnectModal();
+                return;
+            }
+            
             try {
                 withdrawCapitalBtn.disabled = true;
                 withdrawCapitalBtn.innerHTML = '<div class="loading"></div> Processing...';
@@ -1654,23 +1813,45 @@
                 
             } catch (error) {
                 console.error('Error withdrawing capital:', error);
-                alert('Error withdrawing capital. Please try again.');
+                showError(error.message || 'Error withdrawing capital. Please try again.');
             } finally {
                 withdrawCapitalBtn.disabled = false;
                 withdrawCapitalBtn.innerHTML = '<i class="fas fa-wallet"></i> Withdraw Capital';
             }
         });
 
+        // Modal Functions
         goToDashboardBtn.addEventListener('click', () => {
             successModal.classList.remove('active');
             document.getElementById('dashboard').scrollIntoView({ behavior: 'smooth' });
         });
 
-        // Close modal when clicking outside
-        successModal.addEventListener('click', (e) => {
-            if (e.target === successModal) {
-                successModal.classList.remove('active');
-            }
+        const errorModal = document.getElementById('errorModal');
+        const errorMessage = document.getElementById('errorMessage');
+        const closeError = document.getElementById('closeError');
+
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorModal.classList.add('active');
+        }
+
+        closeError.addEventListener('click', () => {
+            errorModal.classList.remove('active');
+        });
+
+        const connectModal = document.getElementById('connectModal');
+
+        function showConnectModal() {
+            connectModal.classList.add('active');
+        }
+
+        // Close modals when clicking outside
+        [successModal, errorModal, connectModal].forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.classList.remove('active');
+                }
+            });
         });
 
         // Countdown Timer
@@ -1723,14 +1904,70 @@
                     web3 = new Web3(window.ethereum);
                     contract = new web3.eth.Contract(CONTRACT_ABI, CONTRACT_ADDRESS);
                     
+                    // Get USDT contract
+                    const usdtAddress = await contract.methods.usdt().call();
+                    const usdtAbi = [
+                        {
+                            "constant": false,
+                            "inputs": [
+                                {"name": "_spender", "type": "address"},
+                                {"name": "_value", "type": "uint256"}
+                            ],
+                            "name": "approve",
+                            "outputs": [{"name": "", "type": "bool"}],
+                            "type": "function"
+                        },
+                        {
+                            "constant": true,
+                            "inputs": [{"name": "_owner", "type": "address"}],
+                            "name": "balanceOf",
+                            "outputs": [{"name": "balance", "type": "uint256"}],
+                            "type": "function"
+                        },
+                        {
+                            "constant": true,
+                            "inputs": [
+                                {"name": "_owner", "type": "address"},
+                                {"name": "_spender", "type": "address"}
+                            ],
+                            "name": "allowance",
+                            "outputs": [{"name": "", "type": "uint256"}],
+                            "type": "function"
+                        }
+                    ];
+                    usdtContract = new web3.eth.Contract(usdtAbi, usdtAddress);
+                    
                     connectWalletBtn.style.display = 'none';
                     walletStatus.style.display = 'block';
                     walletAddress.textContent = account;
-                    document.getElementById('referralLink').value = `https://bnbnest.com/ref=${account}`;
+                    updateReferralLink();
+                    checkReferralFromURL();
                     
                     await loadContractData();
                 }
             }
+        });
+
+        // Add wallet check for all action buttons
+        const actionButtons = [
+            claimROIBtn, withdrawCapitalBtn, investBtn, claimReferralBtn
+        ];
+
+        actionButtons.forEach(button => {
+            const originalClick = button.onclick;
+            button.onclick = null; // Remove existing handler
+            
+            button.addEventListener('click', function(e) {
+                if (!account) {
+                    e.preventDefault();
+                    showConnectModal();
+                    return false;
+                }
+                
+                if (originalClick) {
+                    return originalClick.call(this, e);
+                }
+            });
         });
     </script>
 </body>
