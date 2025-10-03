@@ -17,6 +17,8 @@
             --dark-navy: #0a1128;
             --gradient: linear-gradient(135deg, var(--pink), var(--purple));
             --glow: 0 0 10px rgba(255, 45, 117, 0.7), 0 0 20px rgba(138, 43, 226, 0.5);
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --card-border: rgba(255, 45, 117, 0.2);
         }
 
         * {
@@ -30,6 +32,7 @@
             background-color: var(--dark-navy);
             color: white;
             overflow-x: hidden;
+            line-height: 1.6;
         }
 
         h1, h2, h3, h4 {
@@ -53,13 +56,19 @@
 
         /* Header Styles */
         header {
-            background-color: rgba(15, 26, 58, 0.9);
+            background-color: rgba(15, 26, 58, 0.95);
             backdrop-filter: blur(10px);
             position: fixed;
             width: 100%;
             z-index: 1000;
             padding: 15px 0;
             border-bottom: 1px solid rgba(255, 45, 117, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        header.scrolled {
+            padding: 10px 0;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
         }
 
         .header-content {
@@ -77,6 +86,11 @@
         .logo img {
             height: 40px;
             width: auto;
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover img {
+            transform: scale(1.05);
         }
 
         .logo-text {
@@ -93,10 +107,10 @@
         .language-selector {
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 8px;
             font-size: 14px;
             cursor: pointer;
-            padding: 5px 10px;
+            padding: 8px 12px;
             border-radius: 5px;
             background: rgba(255, 255, 255, 0.1);
             transition: all 0.3s ease;
@@ -110,6 +124,10 @@
         .language-selector img {
             width: 20px;
             height: auto;
+        }
+
+        .language-selector span {
+            white-space: nowrap;
         }
 
         .language-dropdown {
@@ -154,6 +172,7 @@
             width: 30px;
             height: 21px;
             cursor: pointer;
+            z-index: 1002;
         }
 
         .hamburger span {
@@ -163,6 +182,18 @@
             background: white;
             border-radius: 3px;
             transition: all 0.3s ease;
+        }
+
+        .hamburger.active span:nth-child(1) {
+            transform: translateY(9px) rotate(45deg);
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active span:nth-child(3) {
+            transform: translateY(-9px) rotate(-45deg);
         }
 
         .mobile-menu {
@@ -176,6 +207,7 @@
             padding: 80px 30px 30px;
             transition: right 0.5s ease;
             box-shadow: -5px 0 15px rgba(0, 0, 0, 0.5);
+            overflow-y: auto;
         }
 
         .mobile-menu.active {
@@ -212,6 +244,7 @@
             font-size: 24px;
             color: white;
             cursor: pointer;
+            z-index: 1002;
         }
 
         .overlay {
@@ -238,6 +271,20 @@
             background: radial-gradient(circle at top right, rgba(255, 45, 117, 0.2), transparent 50%),
                         radial-gradient(circle at bottom left, rgba(138, 43, 226, 0.2), transparent 50%);
             text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><polygon fill="rgba(255,45,117,0.03)" points="0,1000 1000,0 1000,1000"/></svg>');
+            background-size: cover;
+            z-index: -1;
         }
 
         .hero h1 {
@@ -269,6 +316,23 @@
             transition: all 0.3s ease;
             box-shadow: var(--glow);
             gap: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
         }
 
         .btn:hover {
@@ -359,12 +423,31 @@
         }
 
         .stat-box {
-            background: rgba(255, 255, 255, 0.05);
+            background: var(--card-bg);
             border-radius: 15px;
             padding: 30px;
             text-align: center;
-            border: 1px solid rgba(255, 45, 117, 0.2);
+            border: 1px solid var(--card-border);
             transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: -1;
+        }
+
+        .stat-box:hover::before {
+            opacity: 0.1;
         }
 
         .stat-box:hover {
@@ -387,6 +470,7 @@
         /* Section Styles */
         section {
             padding: 100px 0;
+            position: relative;
         }
 
         .section-header {
@@ -414,12 +498,31 @@
         }
 
         .why-card {
-            background: rgba(255, 255, 255, 0.05);
+            background: var(--card-bg);
             border-radius: 15px;
             padding: 30px;
             text-align: center;
-            border: 1px solid rgba(255, 45, 117, 0.2);
+            border: 1px solid var(--card-border);
             transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .why-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: -1;
+        }
+
+        .why-card:hover::before {
+            opacity: 0.1;
         }
 
         .why-card:hover {
@@ -440,12 +543,13 @@
 
         /* Dashboard Section */
         .dashboard-container {
-            background: rgba(255, 255, 255, 0.05);
+            background: var(--card-bg);
             border-radius: 15px;
             padding: 40px;
-            border: 1px solid rgba(255, 45, 117, 0.2);
+            border: 1px solid var(--card-border);
             max-width: 800px;
             margin: 0 auto;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
         }
 
         .dashboard-info {
@@ -496,10 +600,10 @@
 
         /* Invest Section */
         .invest-box {
-            background: rgba(255, 255, 255, 0.05);
+            background: var(--card-bg);
             border-radius: 15px;
             padding: 40px;
-            border: 1px solid rgba(255, 45, 117, 0.2);
+            border: 1px solid var(--card-border);
             max-width: 600px;
             margin: 0 auto;
             box-shadow: var(--glow);
@@ -523,6 +627,7 @@
             border-radius: 10px;
             color: white;
             font-size: 16px;
+            transition: all 0.3s ease;
         }
 
         .input-group input:focus {
@@ -547,12 +652,13 @@
 
         /* Referral Section */
         .referral-container {
-            background: rgba(255, 255, 255, 0.05);
+            background: var(--card-bg);
             border-radius: 15px;
             padding: 40px;
-            border: 1px solid rgba(255, 45, 117, 0.2);
+            border: 1px solid var(--card-border);
             max-width: 1000px;
             margin: 0 auto;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
         }
 
         .referral-link {
@@ -584,6 +690,11 @@
             align-items: center;
             gap: 8px;
             white-space: nowrap;
+            transition: all 0.3s ease;
+        }
+
+        .referral-link button:hover {
+            background: linear-gradient(135deg, #ff1a6c, #7a1de2);
         }
 
         .referral-stats {
@@ -638,17 +749,34 @@
         }
 
         .tier-card {
-            background: rgba(255, 255, 255, 0.05);
+            background: var(--card-bg);
             border-radius: 15px;
             padding: 30px;
             text-align: center;
-            border: 1px solid rgba(255, 45, 117, 0.2);
+            border: 1px solid var(--card-border);
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+        }
+
+        .tier-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: -1;
+        }
+
+        .tier-card:hover::before {
+            opacity: 0.1;
         }
 
         .tier-card.locked {
@@ -714,6 +842,7 @@
         .step {
             text-align: center;
             padding: 30px;
+            position: relative;
         }
 
         .step-number {
@@ -786,11 +915,11 @@
         }
 
         .security-card {
-            background: rgba(255, 255, 255, 0.05);
+            background: var(--card-bg);
             border-radius: 15px;
             padding: 30px;
             text-align: center;
-            border: 1px solid rgba(255, 45, 117, 0.2);
+            border: 1px solid var(--card-border);
             transition: all 0.3s ease;
         }
 
@@ -959,6 +1088,38 @@
             to { transform: rotate(360deg); }
         }
 
+        /* Scroll to top button */
+        .scroll-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            background: var(--gradient);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            box-shadow: var(--glow);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 999;
+        }
+
+        .scroll-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .scroll-to-top:hover {
+            transform: translateY(-5px);
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .hero h1 {
@@ -1004,8 +1165,23 @@
                 gap: 10px;
             }
             
+            /* PERBAIKAN: Tampilkan teks bahasa di mobile */
             .language-selector span {
-                display: none;
+                display: inline !important;
+                font-size: 12px;
+            }
+            
+            .language-selector {
+                padding: 6px 10px;
+                gap: 5px;
+            }
+
+            .scroll-to-top {
+                bottom: 20px;
+                right: 20px;
+                width: 40px;
+                height: 40px;
+                font-size: 16px;
             }
         }
         
@@ -1022,12 +1198,38 @@
                 border-radius: 0 0 10px 10px;
                 padding: 15px;
             }
+
+            .dashboard-container,
+            .invest-box,
+            .referral-container {
+                padding: 20px;
+            }
+            
+            /* PERBAIKAN: Sesuaikan language selector untuk layar sangat kecil */
+            .language-selector span {
+                font-size: 11px;
+            }
+            
+            .language-selector {
+                padding: 5px 8px;
+            }
+        }
+        
+        @media (max-width: 360px) {
+            /* PERBAIKAN: Untuk layar sangat kecil, sembunyikan teks bahasa */
+            .language-selector span {
+                display: none !important;
+            }
+            
+            .language-selector {
+                padding: 8px;
+            }
         }
     </style>
 </head>
 <body>
     <!-- Header -->
-    <header>
+    <header id="mainHeader">
         <div class="container">
             <div class="header-content">
                 <div class="logo">
@@ -1580,6 +1782,11 @@
         </div>
     </div>
 
+    <!-- Scroll to Top Button -->
+    <button class="scroll-to-top" id="scrollToTop">
+        <i class="fas fa-chevron-up"></i>
+    </button>
+
     <script>
         // Contract Configuration - FINAL
         const CONTRACT_ADDRESS = '0x012da239711B768cEFB745E434fD9C3ac5cD49Da';
@@ -1840,7 +2047,7 @@
                 why_roi_desc: "Ganhe entre 0.5% a 2.5% de retorno diário no seu investimento baseado no crescimento do TVL",
                 why_referral_title: "Programa de Indicação",
                 why_referral_desc: "Ganhe comissões de 17 níveis da sua rede de indicação com porcentagens variando de 2% a 20%",
-                why_salary_title: "Salário Mensal",
+                why_salary_title: "Salário Mensual",
                 why_salary_desc: "Receba salários mensais de 5 níveis com ganhos potenciais de até $50 todo mês",
                 why_security_title: "Seguro e Transparente",
                 why_security_desc: "Nosso contrato inteligente é verificado no BscScan sem capacidade de saque do administrador",
@@ -1872,7 +2079,7 @@
                 referral_rewards: "Recompensas de Indicação",
                 total_referrals: "Total de Indicações",
                 claim_referral: "Reivindicar Recompensas de Indicação",
-                salary_title: "Salário Mensal",
+                salary_title: "Salário Mensual",
                 salary_description: "Ganhe salários mensais de 5 níveis com ganhos potenciais de até $50 todo mês",
                 tier_pioneer: "Pioneiro",
                 tier_pioneer_req1: "Depósito de 50 USDT",
@@ -1899,7 +2106,7 @@
                 step3_title: "Começar a Ganhar",
                 step3_desc: "Comece a ganhar ROI diário, construa sua rede de indicação e qualifique-se para salários mensais",
                 step4_title: "Reivindicar Recompensas",
-                step4_desc: "Reivindique regularmente seu ROI, comissões de indicação e salário mensal",
+                step4_desc: "Reivindique regularmente seu ROI, comissões de indicação e salário mensual",
                 faq_title: "Perguntas Frequentes",
                 faq_description: "Encontre respostas para perguntas comuns sobre nossa plataforma de investimento",
                 faq1_question: "Qual é o depósito mínimo?",
@@ -1936,7 +2143,7 @@
                 success_description: "Seu investimento foi processado com sucesso. Agora você pode começar a ganhar ROI diário.",
                 go_to_dashboard: "Ir para Seu Painel",
                 error_title: "Ops! Algo deu errado.",
-                error_description: "Mensagem de erro:",
+                error_description: "Mensagem de error:",
                 close: "Fechar",
                 connect_modal_title: "Conecte Sua Carteira",
                 connect_modal_description: "Por favor conecte sua carteira para usar esta função. Certifique-se de ter MetaMask ou outra carteira Web3 instalada."
@@ -2188,22 +2395,26 @@
         hamburger.addEventListener('click', () => {
             mobileMenu.classList.add('active');
             overlay.classList.add('active');
+            hamburger.classList.add('active');
         });
 
         closeMenu.addEventListener('click', () => {
             mobileMenu.classList.remove('active');
             overlay.classList.remove('active');
+            hamburger.classList.remove('active');
         });
 
         overlay.addEventListener('click', () => {
             mobileMenu.classList.remove('active');
             overlay.classList.remove('active');
+            hamburger.classList.remove('active');
         });
 
         menuLinks.forEach(link => {
             link.addEventListener('click', () => {
                 mobileMenu.classList.remove('active');
                 overlay.classList.remove('active');
+                hamburger.classList.remove('active');
             });
         });
 
@@ -2525,7 +2736,8 @@
                 }
             } catch (error) {
                 console.error('Error loading contract data:', error);
-                showError('Error loading contract data: ' + error.message);
+                // Don't show error to user if contract data fails to load
+                // showError('Error loading contract data: ' + error.message);
             }
         }
 
@@ -2780,6 +2992,32 @@
                         behavior: 'smooth'
                     });
                 }
+            });
+        });
+
+        // Scroll to top functionality
+        const scrollToTopBtn = document.getElementById('scrollToTop');
+        
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                scrollToTopBtn.classList.add('visible');
+            } else {
+                scrollToTopBtn.classList.remove('visible');
+            }
+            
+            // Header scroll effect
+            const header = document.getElementById('mainHeader');
+            if (window.pageYOffset > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+        
+        scrollToTopBtn.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
             });
         });
 
