@@ -86,7 +86,7 @@
         .nav-right {
             display: flex;
             align-items: center;
-            gap: 20px;
+            gap: 15px;
         }
 
         .language-selector {
@@ -99,6 +99,7 @@
             border-radius: 5px;
             background: rgba(255, 255, 255, 0.1);
             transition: all 0.3s ease;
+            position: relative;
         }
 
         .language-selector:hover {
@@ -106,6 +107,41 @@
         }
 
         .language-selector img {
+            width: 20px;
+            height: auto;
+        }
+
+        .language-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: var(--navy);
+            border-radius: 5px;
+            padding: 10px 0;
+            min-width: 150px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            display: none;
+            z-index: 1001;
+        }
+
+        .language-dropdown.active {
+            display: block;
+        }
+
+        .language-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .language-option:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .language-option img {
             width: 20px;
             height: auto;
         }
@@ -494,6 +530,12 @@
             box-shadow: 0 0 10px rgba(255, 45, 117, 0.5);
         }
 
+        .input-group input:read-only {
+            background: rgba(255, 255, 255, 0.05);
+            color: rgba(255, 255, 255, 0.6);
+            cursor: not-allowed;
+        }
+
         .roi-info {
             background: rgba(255, 45, 117, 0.1);
             padding: 15px;
@@ -515,6 +557,7 @@
         .referral-link {
             display: flex;
             margin-bottom: 30px;
+            width: 100%;
         }
 
         .referral-link input {
@@ -539,6 +582,7 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            white-space: nowrap;
         }
 
         .referral-stats {
@@ -556,7 +600,7 @@
         }
 
         .referral-levels .level-box:nth-child(7) {
-            grid-column: 2 / 3;
+            grid-column: 2 / 4;
         }
 
         .level-box {
@@ -934,16 +978,16 @@
             }
             
             .referral-link {
-                flex-direction: column;
+                flex-direction: row;
             }
             
             .referral-link input {
-                border-radius: 10px 10px 0 0;
+                border-radius: 10px 0 0 10px;
                 text-align: center;
             }
             
             .referral-link button {
-                border-radius: 0 0 10px 10px;
+                border-radius: 0 10px 10px 0;
                 padding: 15px;
             }
             
@@ -952,7 +996,30 @@
             }
             
             .referral-levels .level-box:nth-child(7) {
-                grid-column: auto;
+                grid-column: 1 / 3;
+            }
+            
+            .nav-right {
+                gap: 10px;
+            }
+            
+            .language-selector span {
+                display: none;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .referral-link {
+                flex-direction: column;
+            }
+            
+            .referral-link input {
+                border-radius: 10px 10px 0 0;
+            }
+            
+            .referral-link button {
+                border-radius: 0 0 10px 10px;
+                padding: 15px;
             }
         }
     </style>
@@ -967,9 +1034,32 @@
                     <div class="logo-text gradient-text">BNBNest</div>
                 </div>
                 <div class="nav-right">
-                    <div class="language-selector">
-                        <img src="https://flagcdn.com/w40/gb.png" alt="English">
-                        <span>EN</span>
+                    <div class="language-selector" id="languageSelector">
+                        <img src="https://flagcdn.com/w40/gb.png" alt="English" id="currentFlag">
+                        <span id="currentLanguage">EN</span>
+                        <i class="fas fa-chevron-down"></i>
+                        <div class="language-dropdown" id="languageDropdown">
+                            <div class="language-option" data-lang="en">
+                                <img src="https://flagcdn.com/w40/gb.png" alt="English">
+                                <span>English</span>
+                            </div>
+                            <div class="language-option" data-lang="es">
+                                <img src="https://flagcdn.com/w40/es.png" alt="Spanish">
+                                <span>Español</span>
+                            </div>
+                            <div class="language-option" data-lang="pt">
+                                <img src="https://flagcdn.com/w40/pt.png" alt="Portuguese">
+                                <span>Português</span>
+                            </div>
+                            <div class="language-option" data-lang="hi">
+                                <img src="https://flagcdn.com/w40/in.png" alt="Hindi">
+                                <span>हिन्दी</span>
+                            </div>
+                            <div class="language-option" data-lang="fr">
+                                <img src="https://flagcdn.com/w40/fr.png" alt="French">
+                                <span>Français</span>
+                            </div>
+                        </div>
                     </div>
                     <div class="hamburger" id="hamburger">
                         <span></span>
@@ -1003,32 +1093,32 @@
     <!-- Hero Section -->
     <section class="hero" id="home">
         <div class="container">
-            <h1 class="gradient-text">Smart Investment with BNBNest</h1>
-            <p>Maximize your returns with our secure and transparent investment platform. Earn daily ROI, referral commissions, and monthly salaries</p>
-            <button class="btn" id="connectWallet">Connect Wallet</button>
+            <h1 class="gradient-text" data-translate="hero_title">Smart Investment with BNBNest</h1>
+            <p data-translate="hero_description">Maximize your returns with our secure and transparent investment platform. Earn daily ROI, referral commissions, and monthly salaries</p>
+            <button class="btn" id="connectWallet" data-translate="connect_wallet">Connect Wallet</button>
             
             <div class="wallet-status" id="walletStatus">
                 <div class="connected">
                     <div class="blinking-dot"></div>
-                    <div class="typewriter">Connected</div>
+                    <div class="typewriter" data-translate="connected">Connected</div>
                 </div>
                 <div class="wallet-address" id="walletAddress"></div>
-                <a href="#invest" class="btn">Invest Now</a>
+                <a href="#invest" class="btn" data-translate="invest_now">Invest Now</a>
             </div>
 
-            <div class="stats">
+            <div class="stats" style="margin-top: 60px;">
                 <div class="stats-grid">
                     <div class="stat-box">
                         <div class="stat-value" id="totalTVL">$0</div>
-                        <div class="stat-label">Total Value Locked</div>
+                        <div class="stat-label" data-translate="total_tvl">Total Value Locked</div>
                     </div>
                     <div class="stat-box">
                         <div class="stat-value" id="totalUsers">0</div>
-                        <div class="stat-label">Total Users</div>
+                        <div class="stat-label" data-translate="total_users">Total Users</div>
                     </div>
                     <div class="stat-box">
                         <div class="stat-value" id="currentROI">0%</div>
-                        <div class="stat-label">Current Daily ROI</div>
+                        <div class="stat-label" data-translate="current_roi">Current Daily ROI</div>
                     </div>
                 </div>
             </div>
@@ -1039,37 +1129,37 @@
     <section id="why">
         <div class="container">
             <div class="section-header">
-                <h2 class="gradient-text">Why Choose BNBNest?</h2>
-                <p>Our platform offers multiple ways to grow your investment with security and transparency</p>
+                <h2 class="gradient-text" data-translate="why_title">Why Choose BNBNest?</h2>
+                <p data-translate="why_description">Our platform offers multiple ways to grow your investment with security and transparency</p>
             </div>
             <div class="why-grid">
                 <div class="why-card">
                     <div class="why-icon">
                         <i class="fas fa-chart-line"></i>
                     </div>
-                    <h3>Daily ROI</h3>
-                    <p>Earn between 0.5% to 2.5% daily return on your investment based on TVL growth</p>
+                    <h3 data-translate="why_roi_title">Daily ROI</h3>
+                    <p data-translate="why_roi_desc">Earn between 0.5% to 2.5% daily return on your investment based on TVL growth</p>
                 </div>
                 <div class="why-card">
                     <div class="why-icon">
                         <i class="fas fa-users"></i>
                     </div>
-                    <h3>Referral Program</h3>
-                    <p>Earn commissions from 17 levels of your referral network with percentages ranging from 2% to 20%</p>
+                    <h3 data-translate="why_referral_title">Referral Program</h3>
+                    <p data-translate="why_referral_desc">Earn commissions from 17 levels of your referral network with percentages ranging from 2% to 20%</p>
                 </div>
                 <div class="why-card">
                     <div class="why-icon">
                         <i class="fas fa-money-bill-wave"></i>
                     </div>
-                    <h3>Monthly Salary</h3>
-                    <p>Receive monthly salaries from 5 tiers with potential earnings up to $50 every month</p>
+                    <h3 data-translate="why_salary_title">Monthly Salary</h3>
+                    <p data-translate="why_salary_desc">Receive monthly salaries from 5 tiers with potential earnings up to $50 every month</p>
                 </div>
                 <div class="why-card">
                     <div class="why-icon">
                         <i class="fas fa-shield-alt"></i>
                     </div>
-                    <h3>Secure & Transparent</h3>
-                    <p>Our smart contract is verified on BscScan with no admin withdrawal capabilities</p>
+                    <h3 data-translate="why_security_title">Secure & Transparent</h3>
+                    <p data-translate="why_security_desc">Our smart contract is verified on BscScan with no admin withdrawal capabilities</p>
                 </div>
             </div>
         </div>
@@ -1079,34 +1169,34 @@
     <section id="dashboard">
         <div class="container">
             <div class="section-header">
-                <h2 class="gradient-text">Your Dashboard</h2>
-                <p>Monitor your investments, earnings, and referral network in real-time</p>
+                <h2 class="gradient-text" data-translate="dashboard_title">Your Dashboard</h2>
+                <p data-translate="dashboard_description">Monitor your investments, earnings, and referral network in real-time</p>
             </div>
             <div class="dashboard-container">
                 <div class="dashboard-info">
                     <div class="info-box expiry">
-                        <div class="expiry-label">Expires In</div>
-                        <div class="expiry-value" id="countdown">No active deposit</div>
+                        <div class="expiry-label" data-translate="expires_in">Expires In</div>
+                        <div class="expiry-value" id="countdown" data-translate="no_deposit">No active deposit</div>
                     </div>
                     <div class="info-box">
-                        <div class="info-label">Active Deposit</div>
+                        <div class="info-label" data-translate="active_deposit">Active Deposit</div>
                         <div class="info-value" id="userDeposit">0 USDT</div>
                     </div>
                     <div class="info-box">
-                        <div class="info-label">Pending ROI</div>
+                        <div class="info-label" data-translate="pending_roi">Pending ROI</div>
                         <div class="info-value" id="pendingROI">0 USDT</div>
                     </div>
                     <div class="info-box">
-                        <div class="info-label">Claimed ROI</div>
+                        <div class="info-label" data-translate="claimed_roi">Claimed ROI</div>
                         <div class="info-value" id="claimedROI">0 USDT</div>
                     </div>
                 </div>
                 <div class="dashboard-actions">
                     <button class="btn" id="claimROI">
-                        <i class="fas fa-coins"></i> Claim ROI
+                        <i class="fas fa-coins"></i> <span data-translate="claim_roi">Claim ROI</span>
                     </button>
                     <button class="btn btn-disabled" id="withdrawCapital" disabled>
-                        <i class="fas fa-wallet"></i> Withdraw Capital
+                        <i class="fas fa-wallet"></i> <span data-translate="withdraw_capital">Withdraw Capital</span>
                     </button>
                 </div>
             </div>
@@ -1117,25 +1207,25 @@
     <section id="invest">
         <div class="container">
             <div class="section-header">
-                <h2 class="gradient-text">Start Investing</h2>
-                <p>Deposit USDT and start earning daily returns with our secure investment smart contract</p>
+                <h2 class="gradient-text" data-translate="invest_title">Start Investing</h2>
+                <p data-translate="invest_description">Deposit USDT and start earning daily returns with our secure investment smart contract</p>
             </div>
             <div class="invest-box">
                 <div class="input-group">
-                    <label for="depositAmount">Deposit Amount (USDT)</label>
+                    <label for="depositAmount" data-translate="deposit_amount">Deposit Amount (USDT)</label>
                     <input type="number" id="depositAmount" min="10" placeholder="Minimum 10 USDT">
                 </div>
                 <div class="input-group">
-                    <label for="referrerAddress">Referrer Address (Optional)</label>
-                    <input type="text" id="referrerAddress" placeholder="Will be auto-filled if coming from referral">
+                    <label for="referrerAddress" data-translate="referrer_address">Referrer Address</label>
+                    <input type="text" id="referrerAddress" placeholder="No address detected!" readonly>
                 </div>
                 <div class="roi-info">
-                    <p>Estimated Daily ROI: <span id="estimatedROI">0.5% - 2.5%</span></p>
-                    <p>Based on current TVL: <span id="currentTVL">$0</span></p>
+                    <p data-translate="estimated_roi">Estimated Daily ROI: <span id="estimatedROI">0.5% - 2.5%</span></p>
+                    <p data-translate="based_on_tvl">Based on current TVL: <span id="currentTVL">$0</span></p>
                 </div>
                 <div class="btn-center">
                     <button class="btn" id="investBtn">
-                        <i class="fas fa-rocket"></i> Invest Now
+                        <i class="fas fa-rocket"></i> <span data-translate="invest_now">Invest Now</span>
                     </button>
                 </div>
             </div>
@@ -1146,61 +1236,61 @@
     <section id="referral">
         <div class="container">
             <div class="section-header">
-                <h2 class="gradient-text">Referral Program</h2>
-                <p>Earn commissions from 17 levels of your referral network with our tier-based system</p>
+                <h2 class="gradient-text" data-translate="referral_title">Referral Program</h2>
+                <p data-translate="referral_description">Earn commissions from 17 levels of your referral network with our tier-based system</p>
             </div>
             <div class="referral-container">
                 <div class="referral-link">
                     <input type="text" id="referralLink" value="Connect your wallet to get referral link" readonly>
                     <button id="copyLink">
-                        <i class="fas fa-copy"></i> Copy
+                        <i class="fas fa-copy"></i> <span data-translate="copy">Copy</span>
                     </button>
                 </div>
                 
                 <div class="referral-levels">
                     <div class="level-box">
-                        <div class="level-number">Level 1</div>
+                        <div class="level-number" data-translate="level_1">Level 1</div>
                         <div class="level-percent">20%</div>
                     </div>
                     <div class="level-box">
-                        <div class="level-number">Level 2</div>
+                        <div class="level-number" data-translate="level_2">Level 2</div>
                         <div class="level-percent">10%</div>
                     </div>
                     <div class="level-box">
-                        <div class="level-number">Level 3-6</div>
+                        <div class="level-number" data-translate="level_3_6">Level 3-6</div>
                         <div class="level-percent">5%</div>
                     </div>
                     <div class="level-box">
-                        <div class="level-number">Level 7-10</div>
+                        <div class="level-number" data-translate="level_7_10">Level 7-10</div>
                         <div class="level-percent">3%</div>
                     </div>
                     <div class="level-box">
-                        <div class="level-number">Level 11-14</div>
+                        <div class="level-number" data-translate="level_11_14">Level 11-14</div>
                         <div class="level-percent">2%</div>
                     </div>
                     <div class="level-box">
-                        <div class="level-number">Level 15-16</div>
+                        <div class="level-number" data-translate="level_15_16">Level 15-16</div>
                         <div class="level-percent">5%</div>
                     </div>
                     <div class="level-box">
-                        <div class="level-number">Level 17</div>
+                        <div class="level-number" data-translate="level_17">Level 17</div>
                         <div class="level-percent">10%</div>
                     </div>
                 </div>
                 
                 <div class="referral-stats">
                     <div class="info-box">
-                        <div class="info-label">Referral Rewards</div>
+                        <div class="info-label" data-translate="referral_rewards">Referral Rewards</div>
                         <div class="info-value" id="referralRewards">0 USDT</div>
                     </div>
                     <div class="info-box">
-                        <div class="info-label">Total Referrals</div>
+                        <div class="info-label" data-translate="total_referrals">Total Referrals</div>
                         <div class="info-value" id="totalReferrals">0</div>
                     </div>
                 </div>
                 <div class="btn-center">
                     <button class="btn" id="claimReferral">
-                        <i class="fas fa-gift"></i> Claim Referral Rewards
+                        <i class="fas fa-gift"></i> <span data-translate="claim_referral">Claim Referral Rewards</span>
                     </button>
                 </div>
             </div>
@@ -1211,72 +1301,72 @@
     <section id="salary">
         <div class="container">
             <div class="section-header">
-                <h2 class="gradient-text">Monthly Salary</h2>
-                <p>Earn monthly salaries from 5 tiers with potential earnings up to $50 every month</p>
+                <h2 class="gradient-text" data-translate="salary_title">Monthly Salary</h2>
+                <p data-translate="salary_description">Earn monthly salaries from 5 tiers with potential earnings up to $50 every month</p>
             </div>
             <div class="salary-tiers">
                 <div class="tier-card locked">
-                    <div class="tier-name">Pioneer</div>
+                    <div class="tier-name" data-translate="tier_pioneer">Pioneer</div>
                     <div class="tier-salary">5 USDT/month</div>
                     <ul class="tier-requirements">
-                        <li>50 USDT deposit</li>
-                        <li>10 direct referrals</li>
+                        <li data-translate="tier_pioneer_req1">50 USDT deposit</li>
+                        <li data-translate="tier_pioneer_req2">10 direct referrals</li>
                     </ul>
                     <div class="tier-actions">
                         <button class="btn btn-secondary" disabled>
-                            <i class="fas fa-lock"></i> Claim Salary
+                            <i class="fas fa-lock"></i> <span data-translate="claim_salary">Claim Salary</span>
                         </button>
                     </div>
                 </div>
                 <div class="tier-card locked">
-                    <div class="tier-name">Visionary</div>
+                    <div class="tier-name" data-translate="tier_visionary">Visionary</div>
                     <div class="tier-salary">10 USDT/month</div>
                     <ul class="tier-requirements">
-                        <li>100 USDT deposit</li>
-                        <li>15 direct + 15 level 2 referrals</li>
+                        <li data-translate="tier_visionary_req1">100 USDT deposit</li>
+                        <li data-translate="tier_visionary_req2">15 direct + 15 level 2 referrals</li>
                     </ul>
                     <div class="tier-actions">
                         <button class="btn btn-secondary" disabled>
-                            <i class="fas fa-lock"></i> Claim Salary
+                            <i class="fas fa-lock"></i> <span data-translate="claim_salary">Claim Salary</span>
                         </button>
                     </div>
                 </div>
                 <div class="tier-card locked">
-                    <div class="tier-name">Architect</div>
+                    <div class="tier-name" data-translate="tier_architect">Architect</div>
                     <div class="tier-salary">20 USDT/month</div>
                     <ul class="tier-requirements">
-                        <li>130 USDT deposit</li>
-                        <li>20 referrals at levels 1-3</li>
+                        <li data-translate="tier_architect_req1">130 USDT deposit</li>
+                        <li data-translate="tier_architect_req2">20 referrals at levels 1-3</li>
                     </ul>
                     <div class="tier-actions">
                         <button class="btn btn-secondary" disabled>
-                            <i class="fas fa-lock"></i> Claim Salary
+                            <i class="fas fa-lock"></i> <span data-translate="claim_salary">Claim Salary</span>
                         </button>
                     </div>
                 </div>
                 <div class="tier-card locked">
-                    <div class="tier-name">Maverick</div>
+                    <div class="tier-name" data-translate="tier_maverick">Maverick</div>
                     <div class="tier-salary">30 USDT/month</div>
                     <ul class="tier-requirements">
-                        <li>150 USDT deposit</li>
-                        <li>30 referrals at levels 1-4</li>
+                        <li data-translate="tier_maverick_req1">150 USDT deposit</li>
+                        <li data-translate="tier_maverick_req2">30 referrals at levels 1-4</li>
                     </ul>
                     <div class="tier-actions">
                         <button class="btn btn-secondary" disabled>
-                            <i class="fas fa-lock"></i> Claim Salary
+                            <i class="fas fa-lock"></i> <span data-translate="claim_salary">Claim Salary</span>
                         </button>
                     </div>
                 </div>
                 <div class="tier-card locked">
-                    <div class="tier-name">Legendary</div>
+                    <div class="tier-name" data-translate="tier_legendary">Legendary</div>
                     <div class="tier-salary">50 USDT/month</div>
                     <ul class="tier-requirements">
-                        <li>230 USDT deposit</li>
-                        <li>40 referrals at levels 1-5</li>
+                        <li data-translate="tier_legendary_req1">230 USDT deposit</li>
+                        <li data-translate="tier_legendary_req2">40 referrals at levels 1-5</li>
                     </ul>
                     <div class="tier-actions">
                         <button class="btn btn-secondary" disabled>
-                            <i class="fas fa-lock"></i> Claim Salary
+                            <i class="fas fa-lock"></i> <span data-translate="claim_salary">Claim Salary</span>
                         </button>
                     </div>
                 </div>
@@ -1288,29 +1378,29 @@
     <section id="how-to-join">
         <div class="container">
             <div class="section-header">
-                <h2 class="gradient-text">How to Join</h2>
-                <p>Follow these simple steps to start earning with BNBNest</p>
+                <h2 class="gradient-text" data-translate="how_to_join_title">How to Join</h2>
+                <p data-translate="how_to_join_description">Follow these simple steps to start earning with BNBNest</p>
             </div>
             <div class="steps">
                 <div class="step">
                     <div class="step-number">1</div>
-                    <h3>Connect Wallet</h3>
-                    <p>Connect your BSC-compatible wallet like MetaMask or Trust Wallet</p>
+                    <h3 data-translate="step1_title">Connect Wallet</h3>
+                    <p data-translate="step1_desc">Connect your BSC-compatible wallet like MetaMask or Trust Wallet</p>
                 </div>
                 <div class="step">
                     <div class="step-number">2</div>
-                    <h3>Deposit USDT</h3>
-                    <p>Deposit a minimum of 10 USDT to activate your investment account</p>
+                    <h3 data-translate="step2_title">Deposit USDT</h3>
+                    <p data-translate="step2_desc">Deposit a minimum of 10 USDT to activate your investment account</p>
                 </div>
                 <div class="step">
                     <div class="step-number">3</div>
-                    <h3>Start Earning</h3>
-                    <p>Begin earning daily ROI, build your referral network, and qualify for monthly salaries</p>
+                    <h3 data-translate="step3_title">Start Earning</h3>
+                    <p data-translate="step3_desc">Begin earning daily ROI, build your referral network, and qualify for monthly salaries</p>
                 </div>
                 <div class="step">
                     <div class="step-number">4</div>
-                    <h3>Claim Rewards</h3>
-                    <p>Regularly claim your ROI, referral commissions, and monthly salary</p>
+                    <h3 data-translate="step4_title">Claim Rewards</h3>
+                    <p data-translate="step4_desc">Regularly claim your ROI, referral commissions, and monthly salary</p>
                 </div>
             </div>
         </div>
@@ -1320,53 +1410,53 @@
     <section id="faq">
         <div class="container">
             <div class="section-header">
-                <h2 class="gradient-text">Frequently Asked Questions</h2>
-                <p>Find answers to common questions about our investment platform</p>
+                <h2 class="gradient-text" data-translate="faq_title">Frequently Asked Questions</h2>
+                <p data-translate="faq_description">Find answers to common questions about our investment platform</p>
             </div>
             <div class="faq-container">
                 <div class="faq-item">
                     <div class="faq-question">
-                        <span>What is the minimum deposit?</span>
+                        <span data-translate="faq1_question">What is the minimum deposit?</span>
                         <i class="fas fa-plus"></i>
                     </div>
                     <div class="faq-answer">
-                        <p>The minimum deposit is 10 USDT to start earning with BNBNest</p>
+                        <p data-translate="faq1_answer">The minimum deposit is 10 USDT to start earning with BNBNest</p>
                     </div>
                 </div>
                 <div class="faq-item">
                     <div class="faq-question">
-                        <span>How does the ROI system work?</span>
+                        <span data-translate="faq2_question">How does the ROI system work?</span>
                         <i class="fas fa-plus"></i>
                     </div>
                     <div class="faq-answer">
-                        <p>ROI ranges from 0.5% to 2.5% daily based on the total TVL. The more TVL grows, the higher the ROI percentage</p>
+                        <p data-translate="faq2_answer">ROI ranges from 0.5% to 2.5% daily based on the total TVL. The more TVL grows, the higher the ROI percentage</p>
                     </div>
                 </div>
                 <div class="faq-item">
                     <div class="faq-question">
-                        <span>What is the lock period for capital?</span>
+                        <span data-translate="faq3_question">What is the lock period for capital?</span>
                         <i class="fas fa-plus"></i>
                     </div>
                     <div class="faq-answer">
-                        <p>Your capital is locked for 28 days. After this period, you can withdraw your capital with a 10% fee</p>
+                        <p data-translate="faq3_answer">Your capital is locked for 28 days. After this period, you can withdraw your capital with a 10% fee</p>
                     </div>
                 </div>
                 <div class="faq-item">
                     <div class="faq-question">
-                        <span>How do referral commissions work?</span>
+                        <span data-translate="faq4_question">How do referral commissions work?</span>
                         <i class="fas fa-plus"></i>
                     </div>
                     <div class="faq-answer">
-                        <p>You earn commissions from 17 levels of your referral network, with percentages ranging from 2% to 20% based on your deposit tier</p>
+                        <p data-translate="faq4_answer">You earn commissions from 17 levels of your referral network, with percentages ranging from 2% to 20% based on your deposit tier</p>
                     </div>
                 </div>
                 <div class="faq-item">
                     <div class="faq-question">
-                        <span>How can I qualify for monthly salary?</span>
+                        <span data-translate="faq5_question">How can I qualify for monthly salary?</span>
                         <i class="fas fa-plus"></i>
                     </div>
                     <div class="faq-answer">
-                        <p>Monthly salary tiers require specific deposit amounts and referral counts at different levels. Check the Salary section for details</p>
+                        <p data-translate="faq5_answer">Monthly salary tiers require specific deposit amounts and referral counts at different levels. Check the Salary section for details</p>
                     </div>
                 </div>
             </div>
@@ -1377,42 +1467,42 @@
     <section id="security">
         <div class="container">
             <div class="section-header">
-                <h2 class="gradient-text">Security</h2>
-                <p>Your investments are secured by verified smart contracts on the Binance Smart Chain</p>
+                <h2 class="gradient-text" data-translate="security_title">Security</h2>
+                <p data-translate="security_description">Your investments are secured by verified smart contracts on the Binance Smart Chain</p>
             </div>
             <div class="security-grid">
                 <div class="security-card">
                     <div class="security-icon">
                         <i class="fas fa-check-circle"></i>
                     </div>
-                    <h3>Verified Contract</h3>
-                    <p>Our smart contract is verified on BscScan, ensuring transparency and security</p>
+                    <h3 data-translate="security1_title">Verified Contract</h3>
+                    <p data-translate="security1_desc">Our smart contract is verified on BscScan, ensuring transparency and security</p>
                 </div>
                 <div class="security-card">
                     <div class="security-icon">
                         <i class="fas fa-lock"></i>
                     </div>
-                    <h3>No Admin Withdrawals</h3>
-                    <p>Funds are secured in the contract with no ability for admin to withdraw user deposits</p>
+                    <h3 data-translate="security2_title">No Admin Withdrawals</h3>
+                    <p data-translate="security2_desc">Funds are secured in the contract with no ability for admin to withdraw user deposits</p>
                 </div>
                 <div class="security-card">
                     <div class="security-icon">
                         <i class="fas fa-receipt"></i>
                     </div>
-                    <h3>Transparent Fees</h3>
-                    <p>Clear fee structure: 15% deposit fee, 10% capital withdrawal fee after lock period</p>
+                    <h3 data-translate="security3_title">Transparent Fees</h3>
+                    <p data-translate="security3_desc">Clear fee structure: 15% deposit fee, 10% capital withdrawal fee after lock period</p>
                 </div>
                 <div class="security-card">
                     <div class="security-icon">
                         <i class="fas fa-calendar-alt"></i>
                     </div>
-                    <h3>Lock Period</h3>
-                    <p>28-day lock period ensures stability and prevents premature withdrawals</p>
+                    <h3 data-translate="security4_title">Lock Period</h3>
+                    <p data-translate="security4_desc">28-day lock period ensures stability and prevents premature withdrawals</p>
                 </div>
             </div>
             <div class="security-actions">
                 <a href="https://bscscan.com/address/0x012da239711B768cEFB745E434fD9C3ac5cD49Da" target="_blank" class="btn">
-                    <i class="fas fa-external-link-alt"></i> View on BSCScan
+                    <i class="fas fa-external-link-alt"></i> <span data-translate="view_bscscan">View on BSCScan</span>
                 </a>
             </div>
         </div>
@@ -1425,15 +1515,15 @@
                 <img src="https://files.catbox.moe/loqztx.png" alt="BNBNest Logo">
             </div>
             <div class="footer-links">
-                <a href="#home">Home</a>
-                <a href="#why">Why BNBNest</a>
-                <a href="#dashboard">Dashboard</a>
-                <a href="#invest">Invest</a>
-                <a href="#referral">Referral</a>
-                <a href="#salary">Salary</a>
-                <a href="#how-to-join">How to Join</a>
-                <a href="#faq">FAQ</a>
-                <a href="#security">Security</a>
+                <a href="#home" data-translate="footer_home">Home</a>
+                <a href="#why" data-translate="footer_why">Why BNBNest</a>
+                <a href="#dashboard" data-translate="footer_dashboard">Dashboard</a>
+                <a href="#invest" data-translate="footer_invest">Invest</a>
+                <a href="#referral" data-translate="footer_referral">Referral</a>
+                <a href="#salary" data-translate="footer_salary">Salary</a>
+                <a href="#how-to-join" data-translate="footer_how_to_join">How to Join</a>
+                <a href="#faq" data-translate="footer_faq">FAQ</a>
+                <a href="#security" data-translate="footer_security">Security</a>
             </div>
             <div class="social-icons">
                 <a href="#"><i class="fab fa-telegram"></i></a>
@@ -1452,10 +1542,10 @@
             <div class="modal-icon">
                 <i class="fas fa-check-circle"></i>
             </div>
-            <h3>Investment Successful!</h3>
-            <p>Your investment has been processed successfully. You can now start earning daily ROI.</p>
+            <h3 data-translate="success_title">Investment Successful!</h3>
+            <p data-translate="success_description">Your investment has been processed successfully. You can now start earning daily ROI.</p>
             <button class="btn" id="goToDashboard">
-                <i class="fas fa-tachometer-alt"></i> Go to Your Dashboard
+                <i class="fas fa-tachometer-alt"></i> <span data-translate="go_to_dashboard">Go to Your Dashboard</span>
             </button>
         </div>
     </div>
@@ -1466,11 +1556,11 @@
             <div class="modal-icon">
                 <i class="fas fa-exclamation-triangle"></i>
             </div>
-            <h3>Oops! Something went wrong.</h3>
-            <p>Error message:</p>
+            <h3 data-translate="error_title">Oops! Something went wrong.</h3>
+            <p data-translate="error_description">Error message:</p>
             <div class="error-message" id="errorMessage"></div>
             <button class="btn" id="closeError">
-                <i class="fas fa-times"></i> Close
+                <i class="fas fa-times"></i> <span data-translate="close">Close</span>
             </button>
         </div>
     </div>
@@ -1481,10 +1571,10 @@
             <div class="modal-icon">
                 <i class="fas fa-wallet"></i>
             </div>
-            <h3>Connect Your Wallet</h3>
-            <p>Please connect your wallet to use this feature. Make sure you have MetaMask or another Web3 wallet installed.</p>
+            <h3 data-translate="connect_modal_title">Connect Your Wallet</h3>
+            <p data-translate="connect_modal_description">Please connect your wallet to use this feature. Make sure you have MetaMask or another Web3 wallet installed.</p>
             <button class="btn" id="connectFromModal">
-                <i class="fas fa-plug"></i> Connect Wallet
+                <i class="fas fa-plug"></i> <span data-translate="connect_wallet">Connect Wallet</span>
             </button>
         </div>
     </div>
@@ -1499,6 +1589,593 @@
         let contract;
         let account;
         let usdtContract;
+
+        // Language Configuration
+        const translations = {
+            en: {
+                hero_title: "Smart Investment with BNBNest",
+                hero_description: "Maximize your returns with our secure and transparent investment platform. Earn daily ROI, referral commissions, and monthly salaries",
+                connect_wallet: "Connect Wallet",
+                connected: "Connected",
+                invest_now: "Invest Now",
+                total_tvl: "Total Value Locked",
+                total_users: "Total Users",
+                current_roi: "Current Daily ROI",
+                why_title: "Why Choose BNBNest?",
+                why_description: "Our platform offers multiple ways to grow your investment with security and transparency",
+                why_roi_title: "Daily ROI",
+                why_roi_desc: "Earn between 0.5% to 2.5% daily return on your investment based on TVL growth",
+                why_referral_title: "Referral Program",
+                why_referral_desc: "Earn commissions from 17 levels of your referral network with percentages ranging from 2% to 20%",
+                why_salary_title: "Monthly Salary",
+                why_salary_desc: "Receive monthly salaries from 5 tiers with potential earnings up to $50 every month",
+                why_security_title: "Secure & Transparent",
+                why_security_desc: "Our smart contract is verified on BscScan with no admin withdrawal capabilities",
+                dashboard_title: "Your Dashboard",
+                dashboard_description: "Monitor your investments, earnings, and referral network in real-time",
+                expires_in: "Expires In",
+                no_deposit: "No active deposit",
+                active_deposit: "Active Deposit",
+                pending_roi: "Pending ROI",
+                claimed_roi: "Claimed ROI",
+                claim_roi: "Claim ROI",
+                withdraw_capital: "Withdraw Capital",
+                invest_title: "Start Investing",
+                invest_description: "Deposit USDT and start earning daily returns with our secure investment smart contract",
+                deposit_amount: "Deposit Amount (USDT)",
+                referrer_address: "Referrer Address",
+                estimated_roi: "Estimated Daily ROI:",
+                based_on_tvl: "Based on current TVL:",
+                referral_title: "Referral Program",
+                referral_description: "Earn commissions from 17 levels of your referral network with our tier-based system",
+                copy: "Copy",
+                level_1: "Level 1",
+                level_2: "Level 2",
+                level_3_6: "Level 3-6",
+                level_7_10: "Level 7-10",
+                level_11_14: "Level 11-14",
+                level_15_16: "Level 15-16",
+                level_17: "Level 17",
+                referral_rewards: "Referral Rewards",
+                total_referrals: "Total Referrals",
+                claim_referral: "Claim Referral Rewards",
+                salary_title: "Monthly Salary",
+                salary_description: "Earn monthly salaries from 5 tiers with potential earnings up to $50 every month",
+                tier_pioneer: "Pioneer",
+                tier_pioneer_req1: "50 USDT deposit",
+                tier_pioneer_req2: "10 direct referrals",
+                tier_visionary: "Visionary",
+                tier_visionary_req1: "100 USDT deposit",
+                tier_visionary_req2: "15 direct + 15 level 2 referrals",
+                tier_architect: "Architect",
+                tier_architect_req1: "130 USDT deposit",
+                tier_architect_req2: "20 referrals at levels 1-3",
+                tier_maverick: "Maverick",
+                tier_maverick_req1: "150 USDT deposit",
+                tier_maverick_req2: "30 referrals at levels 1-4",
+                tier_legendary: "Legendary",
+                tier_legendary_req1: "230 USDT deposit",
+                tier_legendary_req2: "40 referrals at levels 1-5",
+                claim_salary: "Claim Salary",
+                how_to_join_title: "How to Join",
+                how_to_join_description: "Follow these simple steps to start earning with BNBNest",
+                step1_title: "Connect Wallet",
+                step1_desc: "Connect your BSC-compatible wallet like MetaMask or Trust Wallet",
+                step2_title: "Deposit USDT",
+                step2_desc: "Deposit a minimum of 10 USDT to activate your investment account",
+                step3_title: "Start Earning",
+                step3_desc: "Begin earning daily ROI, build your referral network, and qualify for monthly salaries",
+                step4_title: "Claim Rewards",
+                step4_desc: "Regularly claim your ROI, referral commissions, and monthly salary",
+                faq_title: "Frequently Asked Questions",
+                faq_description: "Find answers to common questions about our investment platform",
+                faq1_question: "What is the minimum deposit?",
+                faq1_answer: "The minimum deposit is 10 USDT to start earning with BNBNest",
+                faq2_question: "How does the ROI system work?",
+                faq2_answer: "ROI ranges from 0.5% to 2.5% daily based on the total TVL. The more TVL grows, the higher the ROI percentage",
+                faq3_question: "What is the lock period for capital?",
+                faq3_answer: "Your capital is locked for 28 days. After this period, you can withdraw your capital with a 10% fee",
+                faq4_question: "How do referral commissions work?",
+                faq4_answer: "You earn commissions from 17 levels of your referral network, with percentages ranging from 2% to 20% based on your deposit tier",
+                faq5_question: "How can I qualify for monthly salary?",
+                faq5_answer: "Monthly salary tiers require specific deposit amounts and referral counts at different levels. Check the Salary section for details",
+                security_title: "Security",
+                security_description: "Your investments are secured by verified smart contracts on the Binance Smart Chain",
+                security1_title: "Verified Contract",
+                security1_desc: "Our smart contract is verified on BscScan, ensuring transparency and security",
+                security2_title: "No Admin Withdrawals",
+                security2_desc: "Funds are secured in the contract with no ability for admin to withdraw user deposits",
+                security3_title: "Transparent Fees",
+                security3_desc: "Clear fee structure: 15% deposit fee, 10% capital withdrawal fee after lock period",
+                security4_title: "Lock Period",
+                security4_desc: "28-day lock period ensures stability and prevents premature withdrawals",
+                view_bscscan: "View on BSCScan",
+                footer_home: "Home",
+                footer_why: "Why BNBNest",
+                footer_dashboard: "Dashboard",
+                footer_invest: "Invest",
+                footer_referral: "Referral",
+                footer_salary: "Salary",
+                footer_how_to_join: "How to Join",
+                footer_faq: "FAQ",
+                footer_security: "Security",
+                success_title: "Investment Successful!",
+                success_description: "Your investment has been processed successfully. You can now start earning daily ROI.",
+                go_to_dashboard: "Go to Your Dashboard",
+                error_title: "Oops! Something went wrong.",
+                error_description: "Error message:",
+                close: "Close",
+                connect_modal_title: "Connect Your Wallet",
+                connect_modal_description: "Please connect your wallet to use this feature. Make sure you have MetaMask or another Web3 wallet installed."
+            },
+            es: {
+                hero_title: "Inversión Inteligente con BNBNest",
+                hero_description: "Maximiza tus rendimientos con nuestra plataforma de inversión segura y transparente. Gana ROI diario, comisiones por referidos y salarios mensuales",
+                connect_wallet: "Conectar Cartera",
+                connected: "Conectado",
+                invest_now: "Invertir Ahora",
+                total_tvl: "Valor Total Bloqueado",
+                total_users: "Usuarios Totales",
+                current_roi: "ROI Diario Actual",
+                why_title: "¿Por Qué Elegir BNBNest?",
+                why_description: "Nuestra plataforma ofrece múltiples formas de hacer crecer tu inversión con seguridad y transparencia",
+                why_roi_title: "ROI Diario",
+                why_roi_desc: "Gana entre 0.5% y 2.5% de retorno diario en tu inversión basado en el crecimiento del TVL",
+                why_referral_title: "Programa de Referidos",
+                why_referral_desc: "Gana comisiones de 17 niveles de tu red de referidos con porcentajes que van del 2% al 20%",
+                why_salary_title: "Salario Mensual",
+                why_salary_desc: "Recibe salarios mensuales de 5 niveles con ganancias potenciales de hasta $50 cada mes",
+                why_security_title: "Seguro y Transparente",
+                why_security_desc: "Nuestro contrato inteligente está verificado en BscScan sin capacidad de retiro de administrador",
+                dashboard_title: "Tu Panel de Control",
+                dashboard_description: "Monitorea tus inversiones, ganancias y red de referidos en tiempo real",
+                expires_in: "Expira En",
+                no_deposit: "Sin depósito activo",
+                active_deposit: "Depósito Activo",
+                pending_roi: "ROI Pendiente",
+                claimed_roi: "ROI Reclamado",
+                claim_roi: "Reclamar ROI",
+                withdraw_capital: "Retirar Capital",
+                invest_title: "Comenzar a Invertir",
+                invest_description: "Deposita USDT y comienza a ganar rendimientos diarios con nuestro contrato inteligente de inversión seguro",
+                deposit_amount: "Cantidad de Depósito (USDT)",
+                referrer_address: "Dirección del Referidor",
+                estimated_roi: "ROI Diario Estimado:",
+                based_on_tvl: "Basado en TVL actual:",
+                referral_title: "Programa de Referidos",
+                referral_description: "Gana comisiones de 17 niveles de tu red de referidos con nuestro sistema por niveles",
+                copy: "Copiar",
+                level_1: "Nivel 1",
+                level_2: "Nivel 2",
+                level_3_6: "Nivel 3-6",
+                level_7_10: "Nivel 7-10",
+                level_11_14: "Nivel 11-14",
+                level_15_16: "Nivel 15-16",
+                level_17: "Nivel 17",
+                referral_rewards: "Recompensas de Referidos",
+                total_referrals: "Referidos Totales",
+                claim_referral: "Reclamar Recompensas de Referidos",
+                salary_title: "Salario Mensual",
+                salary_description: "Gana salarios mensuales de 5 niveles con ganancias potenciales de hasta $50 cada mes",
+                tier_pioneer: "Pionero",
+                tier_pioneer_req1: "Depósito de 50 USDT",
+                tier_pioneer_req2: "10 referidos directos",
+                tier_visionary: "Visionario",
+                tier_visionary_req1: "Depósito de 100 USDT",
+                tier_visionary_req2: "15 referidos directos + 15 nivel 2",
+                tier_architect: "Arquitecto",
+                tier_architect_req1: "Depósito de 130 USDT",
+                tier_architect_req2: "20 referidos en niveles 1-3",
+                tier_maverick: "Inconformista",
+                tier_maverick_req1: "Depósito de 150 USDT",
+                tier_maverick_req2: "30 referidos en niveles 1-4",
+                tier_legendary: "Legendario",
+                tier_legendary_req1: "Depósito de 230 USDT",
+                tier_legendary_req2: "40 referidos en niveles 1-5",
+                claim_salary: "Reclamar Salario",
+                how_to_join_title: "Cómo Unirse",
+                how_to_join_description: "Sigue estos simples pasos para comenzar a ganar con BNBNest",
+                step1_title: "Conectar Cartera",
+                step1_desc: "Conecta tu cartera compatible con BSC como MetaMask o Trust Wallet",
+                step2_title: "Depositar USDT",
+                step2_desc: "Deposita un mínimo de 10 USDT para activar tu cuenta de inversión",
+                step3_title: "Comenzar a Ganar",
+                step3_desc: "Comienza a ganar ROI diario, construye tu red de referidos y califica para salarios mensuales",
+                step4_title: "Reclamar Recompensas",
+                step4_desc: "Reclama regularmente tu ROI, comisiones de referidos y salario mensual",
+                faq_title: "Preguntas Frecuentes",
+                faq_description: "Encuentra respuestas a preguntas comunes sobre nuestra plataforma de inversión",
+                faq1_question: "¿Cuál es el depósito mínimo?",
+                faq1_answer: "El depósito mínimo es de 10 USDT para comenzar a ganar con BNBNest",
+                faq2_question: "¿Cómo funciona el sistema de ROI?",
+                faq2_answer: "El ROI varía del 0.5% al 2.5% diario según el TVL total. Cuanto más crece el TVL, mayor es el porcentaje de ROI",
+                faq3_question: "¿Cuál es el período de bloqueo del capital?",
+                faq3_answer: "Tu capital está bloqueado por 28 días. Después de este período, puedes retirar tu capital con una tarifa del 10%",
+                faq4_question: "¿Cómo funcionan las comisiones por referidos?",
+                faq4_answer: "Ganas comisiones de 17 niveles de tu red de referidos, con porcentajes que van del 2% al 20% según tu nivel de depósito",
+                faq5_question: "¿Cómo puedo calificar para el salario mensual?",
+                faq5_answer: "Los niveles de salario mensual requieren cantidades específicas de depósito y conteos de referidos en diferentes niveles. Consulta la sección Salario para más detalles",
+                security_title: "Seguridad",
+                security_description: "Tus inversiones están aseguradas por contratos inteligentes verificados en Binance Smart Chain",
+                security1_title: "Contrato Verificado",
+                security1_desc: "Nuestro contrato inteligente está verificado en BscScan, garantizando transparencia y seguridad",
+                security2_title: "Sin Retiros de Administrador",
+                security2_desc: "Los fondos están asegurados en el contrato sin capacidad de retiro por parte del administrador",
+                security3_title: "Tarifas Transparentes",
+                security3_desc: "Estructura de tarifas clara: 15% de tarifa de depósito, 10% de tarifa de retiro de capital después del período de bloqueo",
+                security4_title: "Período de Bloqueo",
+                security4_desc: "Período de bloqueo de 28 días asegura estabilidad y previene retiros prematuros",
+                view_bscscan: "Ver en BSCScan",
+                footer_home: "Inicio",
+                footer_why: "Por Qué BNBNest",
+                footer_dashboard: "Panel",
+                footer_invest: "Invertir",
+                footer_referral: "Referidos",
+                footer_salary: "Salario",
+                footer_how_to_join: "Cómo Unirse",
+                footer_faq: "Preguntas Frecuentes",
+                footer_security: "Seguridad",
+                success_title: "¡Inversión Exitosa!",
+                success_description: "Tu inversión ha sido procesada exitosamente. Ahora puedes comenzar a ganar ROI diario.",
+                go_to_dashboard: "Ir a Tu Panel",
+                error_title: "¡Ups! Algo salió mal.",
+                error_description: "Mensaje de error:",
+                close: "Cerrar",
+                connect_modal_title: "Conecta Tu Cartera",
+                connect_modal_description: "Por favor conecta tu cartera para usar esta función. Asegúrate de tener MetaMask u otra cartera Web3 instalada."
+            },
+            pt: {
+                hero_title: "Investimento Inteligente com BNBNest",
+                hero_description: "Maximize seus retornos com nossa plataforma de investimento segura e transparente. Ganhe ROI diário, comissões de indicação e salários mensais",
+                connect_wallet: "Conectar Carteira",
+                connected: "Conectado",
+                invest_now: "Investir Agora",
+                total_tvl: "Valor Total Bloqueado",
+                total_users: "Total de Usuários",
+                current_roi: "ROI Diário Atual",
+                why_title: "Por Que Escolher BNBNest?",
+                why_description: "Nossa plataforma oferece múltiplas formas de crescer seu investimento com segurança e transparência",
+                why_roi_title: "ROI Diário",
+                why_roi_desc: "Ganhe entre 0.5% a 2.5% de retorno diário no seu investimento baseado no crescimento do TVL",
+                why_referral_title: "Programa de Indicação",
+                why_referral_desc: "Ganhe comissões de 17 níveis da sua rede de indicação com porcentagens variando de 2% a 20%",
+                why_salary_title: "Salário Mensal",
+                why_salary_desc: "Receba salários mensais de 5 níveis com ganhos potenciais de até $50 todo mês",
+                why_security_title: "Seguro e Transparente",
+                why_security_desc: "Nosso contrato inteligente é verificado no BscScan sem capacidade de saque do administrador",
+                dashboard_title: "Seu Painel de Controle",
+                dashboard_description: "Monitore seus investimentos, ganhos e rede de indicação em tempo real",
+                expires_in: "Expira Em",
+                no_deposit: "Nenhum depósito ativo",
+                active_deposit: "Depósito Ativo",
+                pending_roi: "ROI Pendente",
+                claimed_roi: "ROI Reivindicado",
+                claim_roi: "Reivindicar ROI",
+                withdraw_capital: "Retirar Capital",
+                invest_title: "Começar a Investir",
+                invest_description: "Deposite USDT e comece a ganhar retornos diários com nosso contrato inteligente de investimento seguro",
+                deposit_amount: "Valor do Depósito (USDT)",
+                referrer_address: "Endereço do Indicador",
+                estimated_roi: "ROI Diário Estimado:",
+                based_on_tvl: "Baseado no TVL atual:",
+                referral_title: "Programa de Indicação",
+                referral_description: "Ganhe comissões de 17 níveis da sua rede de indicação com nosso sistema de níveis",
+                copy: "Copiar",
+                level_1: "Nível 1",
+                level_2: "Nível 2",
+                level_3_6: "Nível 3-6",
+                level_7_10: "Nível 7-10",
+                level_11_14: "Nível 11-14",
+                level_15_16: "Nível 15-16",
+                level_17: "Nível 17",
+                referral_rewards: "Recompensas de Indicação",
+                total_referrals: "Total de Indicações",
+                claim_referral: "Reivindicar Recompensas de Indicação",
+                salary_title: "Salário Mensal",
+                salary_description: "Ganhe salários mensais de 5 níveis com ganhos potenciais de até $50 todo mês",
+                tier_pioneer: "Pioneiro",
+                tier_pioneer_req1: "Depósito de 50 USDT",
+                tier_pioneer_req2: "10 indicações diretas",
+                tier_visionary: "Visionário",
+                tier_visionary_req1: "Depósito de 100 USDT",
+                tier_visionary_req2: "15 indicações diretas + 15 nível 2",
+                tier_architect: "Arquiteto",
+                tier_architect_req1: "Depósito de 130 USDT",
+                tier_architect_req2: "20 indicações nos níveis 1-3",
+                tier_maverick: "Inovador",
+                tier_maverick_req1: "Depósito de 150 USDT",
+                tier_maverick_req2: "30 indicações nos níveis 1-4",
+                tier_legendary: "Lendário",
+                tier_legendary_req1: "Depósito de 230 USDT",
+                tier_legendary_req2: "40 indicações nos níveis 1-5",
+                claim_salary: "Reivindicar Salário",
+                how_to_join_title: "Como Participar",
+                how_to_join_description: "Siga estes simples passos para começar a ganhar com BNBNest",
+                step1_title: "Conectar Carteira",
+                step1_desc: "Conecte sua carteira compatível com BSC como MetaMask ou Trust Wallet",
+                step2_title: "Depositar USDT",
+                step2_desc: "Deposite um mínimo de 10 USDT para ativar sua conta de investimento",
+                step3_title: "Começar a Ganhar",
+                step3_desc: "Comece a ganhar ROI diário, construa sua rede de indicação e qualifique-se para salários mensais",
+                step4_title: "Reivindicar Recompensas",
+                step4_desc: "Reivindique regularmente seu ROI, comissões de indicação e salário mensal",
+                faq_title: "Perguntas Frequentes",
+                faq_description: "Encontre respostas para perguntas comuns sobre nossa plataforma de investimento",
+                faq1_question: "Qual é o depósito mínimo?",
+                faq1_answer: "O depósito mínimo é de 10 USDT para começar a ganhar com BNBNest",
+                faq2_question: "Como funciona o sistema de ROI?",
+                faq2_answer: "O ROI varia de 0.5% a 2.5% diário com base no TVL total. Quanto mais o TVL cresce, maior a porcentagem de ROI",
+                faq3_question: "Qual é o período de bloqueio do capital?",
+                faq3_answer: "Seu capital é bloqueado por 28 dias. Após este período, você pode retirar seu capital com uma taxa de 10%",
+                faq4_question: "Como funcionam as comissões de indicação?",
+                faq4_answer: "Você ganha comissões de 17 níveis da sua rede de indicação, com porcentagens variando de 2% a 20% baseado no seu nível de depósito",
+                faq5_question: "Como posso me qualificar para o salário mensal?",
+                faq5_answer: "Os níveis de salário mensal requerem quantidades específicas de depósito e contagens de indicação em diferentes níveis. Verifique a seção Salário para detalhes",
+                security_title: "Segurança",
+                security_description: "Seus investimentos são protegidos por contratos inteligentes verificados na Binance Smart Chain",
+                security1_title: "Contrato Verificado",
+                security1_desc: "Nosso contrato inteligente é verificado no BscScan, garantindo transparência e segurança",
+                security2_title: "Sem Saques do Administrador",
+                security2_desc: "Os fundos são protegidos no contrato sem capacidade de saque do administrador",
+                security3_title: "Taxas Transparentes",
+                security3_desc: "Estrutura de taxas clara: 15% de taxa de depósito, 10% de taxa de retirada de capital após o período de bloqueio",
+                security4_title: "Período de Bloqueio",
+                security4_desc: "Período de bloqueio de 28 dias garante estabilidade e previne retiradas prematuras",
+                view_bscscan: "Ver no BSCScan",
+                footer_home: "Início",
+                footer_why: "Por Que BNBNest",
+                footer_dashboard: "Painel",
+                footer_invest: "Investir",
+                footer_referral: "Indicação",
+                footer_salary: "Salário",
+                footer_how_to_join: "Como Participar",
+                footer_faq: "Perguntas Frequentes",
+                footer_security: "Segurança",
+                success_title: "Investimento Bem-sucedido!",
+                success_description: "Seu investimento foi processado com sucesso. Agora você pode começar a ganhar ROI diário.",
+                go_to_dashboard: "Ir para Seu Painel",
+                error_title: "Ops! Algo deu errado.",
+                error_description: "Mensagem de erro:",
+                close: "Fechar",
+                connect_modal_title: "Conecte Sua Carteira",
+                connect_modal_description: "Por favor conecte sua carteira para usar esta função. Certifique-se de ter MetaMask ou outra carteira Web3 instalada."
+            },
+            hi: {
+                hero_title: "BNBNest के साथ स्मार्ट निवेश",
+                hero_description: "हमारे सुरक्षित और पारदर्शी निवेश प्लेटफॉर्म के साथ अपनी कमाई को अधिकतम करें। दैनिक ROI, रेफरल कमीशन और मासिक वेतन कमाएं",
+                connect_wallet: "वॉलेट कनेक्ट करें",
+                connected: "कनेक्टेड",
+                invest_now: "अभी निवेश करें",
+                total_tvl: "कुल लॉक्ड मूल्य",
+                total_users: "कुल उपयोगकर्ता",
+                current_roi: "वर्तमान दैनिक ROI",
+                why_title: "BNBNest क्यों चुनें?",
+                why_description: "हमारा प्लेटफॉर्म सुरक्षा और पारदर्शिता के साथ आपके निवेश को बढ़ाने के कई तरीके प्रदान करता है",
+                why_roi_title: "दैनिक ROI",
+                why_roi_desc: "TVL वृद्धि के आधार पर अपने निवेश पर 0.5% से 2.5% तक दैनिक रिटर्न कमाएं",
+                why_referral_title: "रेफरल प्रोग्राम",
+                why_referral_desc: "अपने रेफरल नेटवर्क के 17 स्तरों से 2% से 20% तक के कमीशन कमाएं",
+                why_salary_title: "मासिक वेतन",
+                why_salary_desc: "5 टियर से मासिक वेतन प्राप्त करें जिसमें प्रति माह $50 तक की कमाई की संभावना है",
+                why_security_title: "सुरक्षित और पारदर्शी",
+                why_security_desc: "हमारा स्मार्ट कॉन्ट्रैक्ट BscScan पर सत्यापित है जिसमें एडमिन निकासी क्षमता नहीं है",
+                dashboard_title: "आपका डैशबोर्ड",
+                dashboard_description: "अपने निवेश, कमाई और रेफरल नेटवर्क को रियल-टाइम में मॉनिटर करें",
+                expires_in: "समाप्त होता है",
+                no_deposit: "कोई सक्रिय जमा नहीं",
+                active_deposit: "सक्रिय जमा",
+                pending_roi: "लंबित ROI",
+                claimed_roi: "दावा किया गया ROI",
+                claim_roi: "ROI दावा करें",
+                withdraw_capital: "पूंजी निकालें",
+                invest_title: "निवेश शुरू करें",
+                invest_description: "USDT जमा करें और हमारे सुरक्षित निवेश स्मार्ट कॉन्ट्रैक्ट के साथ दैनिक रिटर्न कमाना शुरू करें",
+                deposit_amount: "जमा राशि (USDT)",
+                referrer_address: "रेफरर पता",
+                estimated_roi: "अनुमानित दैनिक ROI:",
+                based_on_tvl: "वर्तमान TVL के आधार पर:",
+                referral_title: "रेफरल प्रोग्राम",
+                referral_description: "हमारी टियर-आधारित प्रणाली के साथ अपने रेफरल नेटवर्क के 17 स्तरों से कमीशन कमाएं",
+                copy: "कॉपी करें",
+                level_1: "स्तर 1",
+                level_2: "स्तर 2",
+                level_3_6: "स्तर 3-6",
+                level_7_10: "स्तर 7-10",
+                level_11_14: "स्तर 11-14",
+                level_15_16: "स्तर 15-16",
+                level_17: "स्तर 17",
+                referral_rewards: "रेफरल पुरस्कार",
+                total_referrals: "कुल रेफरल",
+                claim_referral: "रेफरल पुरस्कार दावा करें",
+                salary_title: "मासिक वेतन",
+                salary_description: "5 टियर से मासिक वेतन कमाएं जिसमें प्रति माह $50 तक की कमाई की संभावना है",
+                tier_pioneer: "पायनियर",
+                tier_pioneer_req1: "50 USDT जमा",
+                tier_pioneer_req2: "10 सीधे रेफरल",
+                tier_visionary: "विजनरी",
+                tier_visionary_req1: "100 USDT जमा",
+                tier_visionary_req2: "15 सीधे + 15 स्तर 2 रेफरल",
+                tier_architect: "आर्किटेक्ट",
+                tier_architect_req1: "130 USDT जमा",
+                tier_architect_req2: "स्तर 1-3 में 20 रेफरल",
+                tier_maverick: "मैवरिक",
+                tier_maverick_req1: "150 USDT जमा",
+                tier_maverick_req2: "स्तर 1-4 में 30 रेफरल",
+                tier_legendary: "लिजेंडरी",
+                tier_legendary_req1: "230 USDT जमा",
+                tier_legendary_req2: "स्तर 1-5 में 40 रेफरल",
+                claim_salary: "वेतन दावा करें",
+                how_to_join_title: "कैसे शामिल हों",
+                how_to_join_description: "BNBNest के साथ कमाई शुरू करने के लिए इन सरल चरणों का पालन करें",
+                step1_title: "वॉलेट कनेक्ट करें",
+                step1_desc: "MetaMask या Trust Wallet जैसे BSC-संगत वॉलेट को कनेक्ट करें",
+                step2_title: "USDT जमा करें",
+                step2_desc: "अपने निवेश खाते को सक्रिय करने के लिए न्यूनतम 10 USDT जमा करें",
+                step3_title: "कमाई शुरू करें",
+                step3_desc: "दैनिक ROI कमाना शुरू करें, अपना रेफरल नेटवर्क बनाएं और मासिक वेतन के लिए योग्य बनें",
+                step4_title: "पुरस्कार दावा करें",
+                step4_desc: "नियमित रूप से अपना ROI, रेफरल कमीशन और मासिक वेतन दावा करें",
+                faq_title: "अक्सर पूछे जाने वाले प्रश्न",
+                faq_description: "हमारे निवेश प्लेटफॉर्म के बारे में सामान्य प्रश्नों के उत्तर खोजें",
+                faq1_question: "न्यूनतम जमा राशि क्या है?",
+                faq1_answer: "BNBNest के साथ कमाई शुरू करने के लिए न्यूनतम जमा 10 USDT है",
+                faq2_question: "ROI प्रणाली कैसे काम करती है?",
+                faq2_answer: "ROI कुल TVL के आधार पर 0.5% से 2.5% दैनिक होता है। TVL जितना बढ़ता है, ROI प्रतिशत उतना ही अधिक होता है",
+                faq3_question: "पूंजी के लिए लॉक अवधि क्या है?",
+                faq3_answer: "आपकी पूंजी 28 दिनों के लिए लॉक होती है। इस अवधि के बाद, आप 10% शुल्क के साथ अपनी पूंजी निकाल सकते हैं",
+                faq4_question: "रेफरल कमीशन कैसे काम करते हैं?",
+                faq4_answer: "आप अपने रेफरल नेटवर्क के 17 स्तरों से कमीशन कमाते हैं, जिसमें आपके जमा टियर के आधार पर 2% से 20% तक के प्रतिशत होते हैं",
+                faq5_question: "मैं मासिक वेतन के लिए कैसे योग्य हो सकता हूं?",
+                faq5_answer: "मासिक वेतन टियर के लिए विभिन्न स्तरों पर विशिष्ट जमा राशि और रेफरल गणना की आवश्यकता होती है। विवरण के लिए वेतन अनुभाग देखें",
+                security_title: "सुरक्षा",
+                security_description: "आपके निवेश बिनेंस स्मार्ट चेन पर सत्यापित स्मार्ट कॉन्ट्रैक्ट्स द्वारा सुरक्षित हैं",
+                security1_title: "सत्यापित कॉन्ट्रैक्ट",
+                security1_desc: "हमारा स्मार्ट कॉन्ट्रैक्ट BscScan पर सत्यापित है, जो पारदर्शिता और सुरक्षा सुनिश्चित करता है",
+                security2_title: "कोई एडमिन निकासी नहीं",
+                security2_desc: "फंड कॉन्ट्रैक्ट में सुरक्षित हैं जिसमें एडमिन द्वारा उपयोगकर्ता जमा निकालने की क्षमता नहीं है",
+                security3_title: "पारदर्शी शुल्क",
+                security3_desc: "स्पष्ट शुल्क संरचना: 15% जमा शुल्क, लॉक अवधि के बाद 10% पूंजी निकासी शुल्क",
+                security4_title: "लॉक अवधि",
+                security4_desc: "28-दिन की लॉक अवधि स्थिरता सुनिश्चित करती है और समय से पहले निकासी को रोकती है",
+                view_bscscan: "BSCScan पर देखें",
+                footer_home: "होम",
+                footer_why: "क्यों BNBNest",
+                footer_dashboard: "डैशबोर्ड",
+                footer_invest: "निवेश",
+                footer_referral: "रेफरल",
+                footer_salary: "वेतन",
+                footer_how_to_join: "कैसे शामिल हों",
+                footer_faq: "सवाल-जवाब",
+                footer_security: "सुरक्षा",
+                success_title: "निवेश सफल!",
+                success_description: "आपका निवेश सफलतापूर्वक संसाधित किया गया है। अब आप दैनिक ROI कमाना शुरू कर सकते हैं।",
+                go_to_dashboard: "अपने डैशबोर्ड पर जाएं",
+                error_title: "उफ़! कुछ गलत हो गया।",
+                error_description: "त्रुटि संदेश:",
+                close: "बंद करें",
+                connect_modal_title: "अपना वॉलेट कनेक्ट करें",
+                connect_modal_description: "कृपया इस सुविधा का उपयोग करने के लिए अपना वॉलेट कनेक्ट करें। सुनिश्चित करें कि आपके पास MetaMask या कोई अन्य Web3 वॉलेट इंस्टॉल है।"
+            },
+            fr: {
+                hero_title: "Investissement Intelligent avec BNBNest",
+                hero_description: "Maximisez vos rendements avec notre plateforme d'investissement sécurisée et transparente. Gagnez un ROI quotidien, des commissions de parrainage et des salaires mensuels",
+                connect_wallet: "Connecter le Portefeuille",
+                connected: "Connecté",
+                invest_now: "Investir Maintenant",
+                total_tvl: "Valeur Totale Verrouillée",
+                total_users: "Utilisateurs Totaux",
+                current_roi: "ROI Quotidien Actuel",
+                why_title: "Pourquoi Choisir BNBNest?",
+                why_description: "Notre plateforme offre plusieurs façons de faire croître votre investissement avec sécurité et transparence",
+                why_roi_title: "ROI Quotidien",
+                why_roi_desc: "Gagnez entre 0.5% et 2.5% de rendement quotidien sur votre investissement basé sur la croissance du TVL",
+                why_referral_title: "Programme de Parrainage",
+                why_referral_desc: "Gagnez des commissions sur 17 niveaux de votre réseau de parrainage avec des pourcentages allant de 2% à 20%",
+                why_salary_title: "Salaire Mensuel",
+                why_salary_desc: "Recevez des salaires mensuels de 5 niveaux avec des gains potentiels jusqu'à 50$ chaque mois",
+                why_security_title: "Sécurisé et Transparent",
+                why_security_desc: "Notre contrat intelligent est vérifié sur BscScan sans capacité de retrait administrateur",
+                dashboard_title: "Votre Tableau de Bord",
+                dashboard_description: "Surveillez vos investissements, gains et réseau de parrainage en temps réel",
+                expires_in: "Expire Dans",
+                no_deposit: "Aucun dépôt actif",
+                active_deposit: "Dépôt Actif",
+                pending_roi: "ROI en Attente",
+                claimed_roi: "ROI Réclamé",
+                claim_roi: "Réclamer le ROI",
+                withdraw_capital: "Retirer le Capital",
+                invest_title: "Commencer à Investir",
+                invest_description: "Déposez de l'USDT et commencez à gagner des rendements quotidiens avec notre contrat intelligent d'investissement sécurisé",
+                deposit_amount: "Montant du Dépôt (USDT)",
+                referrer_address: "Adresse du Parrain",
+                estimated_roi: "ROI Quotidien Estimé:",
+                based_on_tvl: "Basé sur le TVL actuel:",
+                referral_title: "Programme de Parrainage",
+                referral_description: "Gagnez des commissions sur 17 niveaux de votre réseau de parrainage avec notre système à paliers",
+                copy: "Copier",
+                level_1: "Niveau 1",
+                level_2: "Niveau 2",
+                level_3_6: "Niveau 3-6",
+                level_7_10: "Niveau 7-10",
+                level_11_14: "Niveau 11-14",
+                level_15_16: "Niveau 15-16",
+                level_17: "Niveau 17",
+                referral_rewards: "Récompenses de Parrainage",
+                total_referrals: "Parrainages Totaux",
+                claim_referral: "Réclamer les Récompenses de Parrainage",
+                salary_title: "Salaire Mensuel",
+                salary_description: "Gagnez des salaires mensuels de 5 niveaux avec des gains potentiels jusqu'à 50$ chaque mois",
+                tier_pioneer: "Pionnier",
+                tier_pioneer_req1: "Dépôt de 50 USDT",
+                tier_pioneer_req2: "10 parrainages directs",
+                tier_visionary: "Visionnaire",
+                tier_visionary_req1: "Dépôt de 100 USDT",
+                tier_visionary_req2: "15 parrainages directs + 15 niveau 2",
+                tier_architect: "Architecte",
+                tier_architect_req1: "Dépôt de 130 USDT",
+                tier_architect_req2: "20 parrainages aux niveaux 1-3",
+                tier_maverick: "Maverick",
+                tier_maverick_req1: "Dépôt de 150 USDT",
+                tier_maverick_req2: "30 parrainages aux niveaux 1-4",
+                tier_legendary: "Légendaire",
+                tier_legendary_req1: "Dépôt de 230 USDT",
+                tier_legendary_req2: "40 parrainages aux niveaux 1-5",
+                claim_salary: "Réclamer le Salaire",
+                how_to_join_title: "Comment Rejoindre",
+                how_to_join_description: "Suivez ces étapes simples pour commencer à gagner avec BNBNest",
+                step1_title: "Connecter le Portefeuille",
+                step1_desc: "Connectez votre portefeuille compatible BSC comme MetaMask ou Trust Wallet",
+                step2_title: "Déposer de l'USDT",
+                step2_desc: "Déposez un minimum de 10 USDT pour activer votre compte d'investissement",
+                step3_title: "Commencer à Gagner",
+                step3_desc: "Commencez à gagner un ROI quotidien, construisez votre réseau de parrainage et qualifiez-vous pour des salaires mensuels",
+                step4_title: "Réclamer les Récompenses",
+                step4_desc: "Réclamez régulièrement votre ROI, vos commissions de parrainage et votre salaire mensuel",
+                faq_title: "Questions Fréquemment Posées",
+                faq_description: "Trouvez des réponses aux questions courantes sur notre plateforme d'investissement",
+                faq1_question: "Quel est le dépôt minimum?",
+                faq1_answer: "Le dépôt minimum est de 10 USDT pour commencer à gagner avec BNBNest",
+                faq2_question: "Comment fonctionne le système de ROI?",
+                faq2_answer: "Le ROI varie de 0.5% à 2.5% quotidiennement basé sur le TVL total. Plus le TVL augmente, plus le pourcentage de ROI est élevé",
+                faq3_question: "Quelle est la période de verrouillage du capital?",
+                faq3_answer: "Votre capital est verrouillé pendant 28 jours. Après cette période, vous pouvez retirer votre capital avec des frais de 10%",
+                faq4_question: "Comment fonctionnent les commissions de parrainage?",
+                faq4_answer: "Vous gagnez des commissions sur 17 niveaux de votre réseau de parrainage, avec des pourcentages allant de 2% à 20% basé sur votre niveau de dépôt",
+                faq5_question: "Comment puis-je me qualifier pour le salaire mensuel?",
+                faq5_answer: "Les niveaux de salaire mensuel nécessitent des montants de dépôt spécifiques et des comptes de parrainage à différents niveaux. Consultez la section Salaire pour plus de détails",
+                security_title: "Sécurité",
+                security_description: "Vos investissements sont sécurisés par des contrats intelligents vérifiés sur Binance Smart Chain",
+                security1_title: "Contrat Vérifié",
+                security1_desc: "Notre contrat intelligent est vérifié sur BscScan, assurant transparence et sécurité",
+                security2_title: "Aucun Retrait Administrateur",
+                security2_desc: "Les fonds sont sécurisés dans le contrat sans capacité de retrait par l'administrateur",
+                security3_title: "Frais Transparents",
+                security3_desc: "Structure de frais claire: 15% de frais de dépôt, 10% de frais de retrait de capital après la période de verrouillage",
+                security4_title: "Période de Verrouillage",
+                security4_desc: "Période de verrouillage de 28 jours assure la stabilité et prévient les retraits prématurés",
+                view_bscscan: "Voir sur BSCScan",
+                footer_home: "Accueil",
+                footer_why: "Pourquoi BNBNest",
+                footer_dashboard: "Tableau de Bord",
+                footer_invest: "Investir",
+                footer_referral: "Parrainage",
+                footer_salary: "Salaire",
+                footer_how_to_join: "Comment Rejoindre",
+                footer_faq: "FAQ",
+                footer_security: "Sécurité",
+                success_title: "Investissement Réussi!",
+                success_description: "Votre investissement a été traité avec succès. Vous pouvez maintenant commencer à gagner un ROI quotidien.",
+                go_to_dashboard: "Aller à Votre Tableau de Bord",
+                error_title: "Oups! Quelque chose s'est mal passé.",
+                error_description: "Message d'erreur:",
+                close: "Fermer",
+                connect_modal_title: "Connectez Votre Portefeuille",
+                connect_modal_description: "Veuillez connecter votre portefeuille pour utiliser cette fonctionnalité. Assurez-vous d'avoir MetaMask ou un autre portefeuille Web3 installé."
+            }
+        };
+
+        // Current language
+        let currentLanguage = 'en';
 
         // Mobile Menu Toggle
         const hamburger = document.getElementById('hamburger');
@@ -1528,6 +2205,82 @@
                 overlay.classList.remove('active');
             });
         });
+
+        // Language Selector
+        const languageSelector = document.getElementById('languageSelector');
+        const languageDropdown = document.getElementById('languageDropdown');
+        const currentFlag = document.getElementById('currentFlag');
+        const currentLanguageText = document.getElementById('currentLanguage');
+
+        languageSelector.addEventListener('click', (e) => {
+            e.stopPropagation();
+            languageDropdown.classList.toggle('active');
+        });
+
+        document.addEventListener('click', () => {
+            languageDropdown.classList.remove('active');
+        });
+
+        const languageOptions = document.querySelectorAll('.language-option');
+        languageOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                const lang = option.getAttribute('data-lang');
+                changeLanguage(lang);
+                languageDropdown.classList.remove('active');
+            });
+        });
+
+        function changeLanguage(lang) {
+            currentLanguage = lang;
+            const translation = translations[lang];
+            
+            // Update current language display
+            currentFlag.src = `https://flagcdn.com/w40/${getCountryCode(lang)}.png`;
+            currentLanguageText.textContent = getLanguageCode(lang);
+            
+            // Update all translatable elements
+            document.querySelectorAll('[data-translate]').forEach(element => {
+                const key = element.getAttribute('data-translate');
+                if (translation[key]) {
+                    if (element.tagName === 'INPUT' && element.type === 'text') {
+                        element.placeholder = translation[key];
+                    } else {
+                        element.textContent = translation[key];
+                    }
+                }
+            });
+            
+            // Save language preference
+            localStorage.setItem('preferredLanguage', lang);
+        }
+
+        function getCountryCode(lang) {
+            const countryCodes = {
+                'en': 'gb',
+                'es': 'es',
+                'pt': 'pt',
+                'hi': 'in',
+                'fr': 'fr'
+            };
+            return countryCodes[lang] || 'gb';
+        }
+
+        function getLanguageCode(lang) {
+            const languageCodes = {
+                'en': 'EN',
+                'es': 'ES',
+                'pt': 'PT',
+                'hi': 'HI',
+                'fr': 'FR'
+            };
+            return languageCodes[lang] || 'EN';
+        }
+
+        // Load saved language preference
+        const savedLanguage = localStorage.getItem('preferredLanguage');
+        if (savedLanguage && translations[savedLanguage]) {
+            changeLanguage(savedLanguage);
+        }
 
         // FAQ Toggle
         const faqItems = document.querySelectorAll('.faq-item');
@@ -1695,8 +2448,12 @@
         function checkReferralFromURL() {
             const urlParams = new URLSearchParams(window.location.search);
             const refAddress = urlParams.get('ref');
+            const referrerInput = document.getElementById('referrerAddress');
+            
             if (refAddress && web3.utils.isAddress(refAddress)) {
-                document.getElementById('referrerAddress').value = refAddress;
+                referrerInput.value = refAddress;
+            } else {
+                referrerInput.value = "No address detected!";
             }
         }
 
@@ -1762,7 +2519,7 @@
                         const unlockTime = depositTime + lockPeriod;
                         updateCountdown(unlockTime);
                     } else {
-                        document.getElementById('countdown').textContent = "No active deposit";
+                        document.getElementById('countdown').textContent = translations[currentLanguage].no_deposit || "No active deposit";
                     }
                 }
             } catch (error) {
@@ -1783,7 +2540,8 @@
             }
             
             const depositAmount = document.getElementById('depositAmount').value;
-            const referrerAddress = document.getElementById('referrerAddress').value;
+            const referrerAddressInput = document.getElementById('referrerAddress');
+            let referrerAddress = referrerAddressInput.value;
             
             if (!depositAmount || depositAmount < 10) {
                 alert('Please enter a valid deposit amount (minimum 10 USDT)');
@@ -1795,7 +2553,11 @@
                 investBtn.innerHTML = '<div class="loading"></div> Processing...';
                 
                 const amount = Math.floor(depositAmount * 1e6).toString();
-                const referrer = referrerAddress && web3.utils.isAddress(referrerAddress) ? referrerAddress : '0x0000000000000000000000000000000000000000';
+                
+                // Use referrer address only if it's a valid address
+                const referrer = (referrerAddress && web3.utils.isAddress(referrerAddress) && 
+                                 referrerAddress !== "No address detected!") ? 
+                                 referrerAddress : '0x0000000000000000000000000000000000000000';
                 
                 console.log('Deposit amount in USDT units:', amount);
                 
@@ -1847,7 +2609,7 @@
                 showError(errorMsg);
             } finally {
                 investBtn.disabled = false;
-                investBtn.innerHTML = '<i class="fas fa-rocket"></i> Invest Now';
+                investBtn.innerHTML = '<i class="fas fa-rocket"></i> ' + (translations[currentLanguage].invest_now || 'Invest Now');
             }
         });
 
@@ -1877,7 +2639,7 @@
                 showError(error.message || 'Error claiming ROI. Please try again.');
             } finally {
                 claimROIBtn.disabled = false;
-                claimROIBtn.innerHTML = '<i class="fas fa-coins"></i> Claim ROI';
+                claimROIBtn.innerHTML = '<i class="fas fa-coins"></i> ' + (translations[currentLanguage].claim_roi || 'Claim ROI');
             }
         });
 
@@ -1907,7 +2669,7 @@
                 showError(error.message || 'Error claiming referral rewards. Please try again.');
             } finally {
                 claimReferralBtn.disabled = false;
-                claimReferralBtn.innerHTML = '<i class="fas fa-gift"></i> Claim Referral Rewards';
+                claimReferralBtn.innerHTML = '<i class="fas fa-gift"></i> ' + (translations[currentLanguage].claim_referral || 'Claim Referral Rewards');
             }
         });
 
@@ -1937,7 +2699,7 @@
                 showError(error.message || 'Error withdrawing capital. Please try again.');
             } finally {
                 withdrawCapitalBtn.disabled = false;
-                withdrawCapitalBtn.innerHTML = '<i class="fas fa-wallet"></i> Withdraw Capital';
+                withdrawCapitalBtn.innerHTML = '<i class="fas fa-wallet"></i> ' + (translations[currentLanguage].withdraw_capital || 'Withdraw Capital');
             }
         });
 
